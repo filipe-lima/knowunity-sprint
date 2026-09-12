@@ -1,0 +1,349 @@
+/**
+ * Generated file — do not edit by hand.
+ * Source: tokens/tokens.json. Regenerate with `npm run tokens`.
+ */
+
+:root {
+  --color-navy-800: #22242f;
+  --color-navy-900: #1a1c26;
+  --color-navy-950: #090c18;
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fffcf4;
+  --color-neutral-950: #0a0a0a;
+  --color-violet-50: #f4f2ff;
+  --color-violet-200: #d2ccfa;
+  --color-violet-250: #c2b0f7;
+  --color-violet-300: #a78bfa;
+  --color-violet-400: #7b65e0;
+  --color-violet-500: #9178e6;
+  --color-violet-900: #15103a;
+  --color-violet-950: #0e0a18;
+  --color-green-300: #4ae5b0;
+  --color-green-500: #00c386;
+  --color-green-900: #0a2e22;
+  --color-green-950: #0a1f18;
+  --color-red-200: #fca5a5;
+  --color-red-300: #ff8585;
+  --color-red-400: #ff6b6b;
+  --color-red-500: #e85555;
+  --color-red-900: #532831;
+  --color-red-950: #2a0808;
+  --color-coral-200: #ffb59b;
+  --color-coral-400: #fb7e5b;
+  --color-coral-900: #512e2c;
+  --color-coral-950: #2e0f06;
+  --color-blue-300: #7ba8f2;
+  --color-blue-400: #5fa0fc;
+  --color-blue-900: #0a1635;
+  --color-blue-950: #06173b;
+  --color-magenta-200: #f7b5de;
+  --color-magenta-400: #e879c0;
+  --color-magenta-900: #380d29;
+  --color-magenta-950: #2c0a20;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #f5b53d;
+  --color-gold-900: #3a2d0b;
+  --color-gold-950: #2a1d04;
+  --color-alpha-dark-10: rgba(10, 10, 10, 0.102);
+  --color-alpha-dark-50: rgba(10, 10, 10, 0.502);
+  --color-alpha-glass-60: rgba(61, 61, 61, 0.6);
+  --color-alpha-light-10: rgba(255, 255, 255, 0.102);
+  --color-alpha-light-18: rgba(255, 255, 255, 0.1804);
+  --color-alpha-light-24: rgba(255, 255, 255, 0.2392);
+  --color-alpha-light-25: rgba(255, 255, 255, 0.251);
+  --color-alpha-light-40: rgba(255, 255, 255, 0.4);
+  --color-alpha-light-48: rgba(245, 243, 255, 0.4784);
+  --color-alpha-light-6: rgba(255, 255, 255, 0.0588);
+  --color-alpha-light-68: rgba(245, 243, 255, 0.6784);
+  --color-homie-inkwell: #9178e6;
+  --color-homie-eyes: #0a0a0a;
+  --color-black-100: rgba(12, 12, 13, 0.05);
+  --color-black-200: rgba(12, 12, 13, 0.1);
+  --color-black-300: rgba(12, 12, 13, 0.15);
+  --color-black-400: rgba(12, 12, 13, 0.4);
+  --color-slate-200: #e3e3e3;
+  --space-0: 0px;
+  --space-100: 4px;
+  --space-125: 5px;
+  --space-150: 6px;
+  --space-200: 8px;
+  --space-250: 10px;
+  --space-300: 12px;
+  --space-400: 16px;
+  --space-600: 24px;
+  --space-700: 28px;
+  --space-800: 32px;
+  --space-1200: 48px;
+  --space-1600: 64px;
+  --space-2400: 96px;
+  --space-4000: 160px;
+  --space-050: 2px;
+  --space-negative-100: -4px;
+  --space-negative-200: -8px;
+  --space-negative-300: -12px;
+  --space-negative-400: -16px;
+  --space-negative-600: -24px;
+  --radius-100: 4px;
+  --radius-150: 6px;
+  --radius-200: 8px;
+  --radius-300: 12px;
+  --radius-400: 16px;
+  --radius-600: 24px;
+  --radius-800: 32px;
+  --radius-900: 36px;
+  --radius-full: 9999px;
+  --icon-100: 8px;
+  --icon-150: 12px;
+  --icon-200: 16px;
+  --icon-250: 20px;
+  --icon-300: 24px;
+  --icon-400: 32px;
+  --control-200: 16px;
+  --control-250: 20px;
+  --control-300: 24px;
+  --control-400: 32px;
+  --control-500: 40px;
+  --control-600: 48px;
+  --control-700: 56px;
+  --illustration-400: 32px;
+  --illustration-500: 40px;
+  --illustration-800: 64px;
+  --illustration-1200: 96px;
+  --illustration-1500: 120px;
+  --illustration-2200: 176px;
+  --illustration-2500: 200px;
+  --illustration-3700: 296px;
+  --illustration-4000: 320px;
+  --depth-0: 0px;
+  --depth-100: 4px;
+  --depth-400: 16px;
+  --depth-800: 32px;
+  --depth-025: 1px;
+  --depth-negative-025: -1px;
+  --depth-negative-050: -2px;
+  --depth-negative-100: -4px;
+  --depth-negative-200: -8px;
+  --blur-100: 4px;
+  --blur-800: 32px;
+  --stroke-border: 1px;
+  --stroke-heavy-border: 2px;
+  --font-family-default: 'Greed Standard-TRIAL';
+  --font-family-display: 'Greed Condensed-TRIAL';
+  --font-weight-regular: regular;
+  --font-weight-semibold: semi-bold;
+  --font-weight-bold: bold;
+  --font-weight-heavy: heavy;
+  --font-size-2xs: 9px;
+  --font-size-xs: 12px;
+  --font-size-sm: 15px;
+  --font-size-md: 18px;
+  --font-size-lg: 21px;
+  --font-size-xl: 28px;
+  --font-size-2xl: 33px;
+  --font-size-3xl: 44px;
+  --font-size-4xl: 59px;
+  --font-size-5xl: 76px;
+  --font-size-6xl: 103px;
+  --font-size-root: 16px;
+  --font-line-height-2xs: 12px;
+  --font-line-height-xs: 16px;
+  --font-line-height-sm: 20px;
+  --font-line-height-md: 24px;
+  --font-line-height-lg: 28px;
+  --font-line-height-xl: 36px;
+  --font-line-height-2xl: 44px;
+  --font-line-height-3xl: 60px;
+  --font-line-height-4xl: 76px;
+  --font-line-height-5xl: 104px;
+  --font-tracking-tight: -1px;
+  --font-tracking-none: 0px;
+  --font-tracking-loose: 1px;
+  --responsive-device-width-mobile: 375px; /** Reference viewport width for the mobile breakpoint. */
+  --responsive-device-width-tablet: 768px; /** Reference viewport width for the tablet breakpoint. */
+  --responsive-device-width-desktop: 1200px; /** Reference viewport width for the desktop breakpoint. */
+  --responsive-scale-mobile: 1.25; /** Multiplier applied to scalable sizes at the mobile breakpoint. */
+  --responsive-scale-tablet: 1; /** Multiplier applied to scalable sizes at the tablet breakpoint. */
+  --responsive-scale-desktop: 1; /** Multiplier applied to scalable sizes at the desktop breakpoint. */
+  --color-background-page: var(--color-navy-950); /** The base canvas of the app; use it on the outermost screen background. */
+  --color-background-surface: var(--color-navy-800); /** The default raised surface on the page; use it for cards, sheets and list containers. */
+  --color-background-input: var(--color-navy-900); /** Fill for editable controls such as text fields and search bars. */
+  --color-background-floating: var(--color-alpha-glass-60); /** Translucent glass fill for elements that hover above content, such as toolbars and floating action bars. */
+  --color-background-stacking: var(--color-alpha-light-10); /** Fill for a surface layered directly on top of another surface, so the stack stays readable. */
+  --color-background-inverse: var(--color-violet-50); /** Light background for blocks that must invert against the dark UI, such as a high-emphasis banner. */
+  --color-background-scrim: var(--color-alpha-dark-50); /** Dimming layer behind modals and sheets that mutes the content underneath. */
+  --color-interactive-primary-default: var(--color-violet-50); /** Fill for the single most important action in a view. */
+  --color-interactive-primary-hover: var(--color-violet-200); /** Primary action fill while the pointer rests on it. */
+  --color-interactive-primary-active: var(--color-violet-250); /** Primary action fill while it is being pressed. */
+  --color-interactive-primary-on: var(--color-navy-950); /** Label and icon colour placed on interactive/primary. */
+  --color-interactive-secondary-default: var(--color-alpha-light-10); /** Fill for supporting actions that sit beside the primary one. */
+  --color-interactive-secondary-hover: var(--color-alpha-light-18); /** Secondary action fill while the pointer rests on it. */
+  --color-interactive-secondary-active: var(--color-alpha-light-24); /** Secondary action fill while it is being pressed. */
+  --color-interactive-secondary-on: var(--color-violet-50); /** Label and icon colour placed on interactive/secondary. */
+  --color-interactive-destructive-default: var(--color-red-400); /** Fill for actions that delete or otherwise cannot be undone. */
+  --color-interactive-destructive-hover: var(--color-red-300); /** Destructive action fill while the pointer rests on it. */
+  --color-interactive-destructive-active: var(--color-red-500); /** Destructive action fill while it is being pressed. */
+  --color-interactive-destructive-on: var(--color-red-950); /** Label and icon colour placed on interactive/destructive. */
+  --color-interactive-pressed-default: var(--color-alpha-light-10); /** Generic pressed overlay for tappable surfaces with no dedicated pressed fill. */
+  --color-interactive-pressed-inverse: var(--color-alpha-dark-10); /** Pressed overlay for tappable surfaces sitting on light backgrounds. */
+  --color-interactive-disabled: var(--color-alpha-light-6); /** Fill for a control that is visible but not currently actionable. */
+  --color-text-primary: var(--color-violet-50); /** Default reading colour for headings and body copy. */
+  --color-text-secondary: var(--color-alpha-light-68); /** Supporting copy that should sit one step below primary in emphasis. */
+  --color-text-tertiary: var(--color-alpha-light-48); /** Lowest-emphasis copy, for metadata, counters and timestamps. */
+  --color-text-disabled: var(--color-alpha-light-40); /** Copy inside a control that is not currently actionable. */
+  --color-text-inverse: var(--color-navy-950); /** Copy placed on background/inverse or any other light surface. */
+  --color-text-link-default: var(--color-violet-500); /** Inline link colour within running text. */
+  --color-text-link-hover: var(--color-violet-300); /** Link colour while the pointer rests on it. */
+  --color-text-link-active: var(--color-violet-400); /** Link colour while it is being pressed. */
+  --color-text-success: var(--color-green-300); /** Inline copy reporting a successful outcome. */
+  --color-text-error: var(--color-red-200); /** Inline copy reporting a failed or invalid outcome. */
+  --color-text-warning: var(--color-gold-300); /** Inline copy raising a caution the user should read before continuing. */
+  --color-text-on-accent: var(--color-violet-950); /** Copy placed on a bold accent fill. */
+  --color-border-default: var(--color-alpha-light-10); /** Hairline separating a surface from its neighbour; the default for dividers and card edges. */
+  --color-border-strong: var(--color-alpha-light-25); /** Higher-contrast border for elements that must read as clearly bounded. */
+  --color-border-focus: var(--color-violet-300); /** Focus ring on the element currently receiving keyboard input. */
+  --color-border-error: var(--color-red-400); /** Border on a field whose input has failed validation. */
+  --color-border-success: var(--color-green-500); /** Border on a field whose input has been accepted. */
+  --color-border-selected: var(--color-violet-500); /** Border marking the currently selected option in a set. */
+  --color-accent-green-bold: var(--color-green-500); /** Saturated green fill for badges, chips and accents that must carry weight. */
+  --color-accent-green-on-bold: var(--color-green-950); /** Content colour placed on accent/green/bold. */
+  --color-accent-green-subtle: var(--color-green-900); /** Low-saturation green fill for tinted containers and section backgrounds. */
+  --color-accent-green-on-subtle: var(--color-green-300); /** Content colour placed on accent/green/subtle. */
+  --color-accent-coral-bold: var(--color-coral-400); /** Saturated coral fill for badges, chips and accents that must carry weight. */
+  --color-accent-coral-on-bold: var(--color-coral-950); /** Content colour placed on accent/coral/bold. */
+  --color-accent-coral-subtle: var(--color-coral-900); /** Low-saturation coral fill for tinted containers and section backgrounds. */
+  --color-accent-coral-on-subtle: var(--color-coral-200); /** Content colour placed on accent/coral/subtle. */
+  --color-accent-blue-bold: var(--color-blue-400); /** Saturated blue fill for badges, chips and accents that must carry weight. */
+  --color-accent-blue-on-bold: var(--color-blue-950); /** Content colour placed on accent/blue/bold. */
+  --color-accent-blue-subtle: var(--color-blue-900); /** Low-saturation blue fill for tinted containers and section backgrounds. */
+  --color-accent-blue-on-subtle: var(--color-blue-300); /** Content colour placed on accent/blue/subtle. */
+  --color-accent-magenta-bold: var(--color-magenta-400); /** Saturated magenta fill for badges, chips and accents that must carry weight. */
+  --color-accent-magenta-on-bold: var(--color-magenta-950); /** Content colour placed on accent/magenta/bold. */
+  --color-accent-magenta-subtle: var(--color-magenta-900); /** Low-saturation magenta fill for tinted containers and section backgrounds. */
+  --color-accent-magenta-on-subtle: var(--color-magenta-200); /** Content colour placed on accent/magenta/subtle. */
+  --color-accent-brand-bold: var(--color-violet-500); /** Saturated brand violet fill for badges, chips and accents that must carry weight. */
+  --color-accent-brand-on-bold: var(--color-violet-950); /** Content colour placed on accent/brand/bold. */
+  --color-accent-brand-subtle: var(--color-violet-900); /** Low-saturation brand violet fill for tinted containers and section backgrounds. */
+  --color-accent-brand-on-subtle: var(--color-violet-400); /** Content colour placed on accent/brand/subtle. */
+  --color-accent-pro-bold: var(--color-gold-400); /** Saturated premium gold fill for badges, chips and accents that must carry weight. */
+  --color-accent-pro-on-bold: var(--color-gold-950); /** Content colour placed on accent/pro/bold. */
+  --color-accent-pro-subtle: var(--color-gold-900); /** Low-saturation premium gold fill for tinted containers and section backgrounds. */
+  --color-accent-pro-on-subtle: var(--color-gold-300); /** Content colour placed on accent/pro/subtle. */
+  --color-feedback-success-bold: var(--color-green-500); /** High-emphasis fill for a message reporting a successful outcome. */
+  --color-feedback-success-on-bold: var(--color-green-950); /** Content colour placed on feedback/success/bold. */
+  --color-feedback-success-subtle: var(--color-green-900); /** Tinted banner or inline-message fill reporting a successful outcome. */
+  --color-feedback-success-on-subtle: var(--color-green-300); /** Content colour placed on feedback/success/subtle. */
+  --color-feedback-error-bold: var(--color-red-400); /** High-emphasis fill for a message reporting a failure the user must resolve. */
+  --color-feedback-error-on-bold: var(--color-red-950); /** Content colour placed on feedback/error/bold. */
+  --color-feedback-error-subtle: var(--color-red-900); /** Tinted banner or inline-message fill reporting a failure the user must resolve. */
+  --color-feedback-error-on-subtle: var(--color-red-200); /** Content colour placed on feedback/error/subtle. */
+  --color-feedback-warning-bold: var(--color-gold-400); /** High-emphasis fill for a message reporting a caution the user should read. */
+  --color-feedback-warning-on-bold: var(--color-gold-950); /** Content colour placed on feedback/warning/bold. */
+  --color-feedback-warning-subtle: var(--color-gold-900); /** Tinted banner or inline-message fill reporting a caution the user should read. */
+  --color-feedback-warning-on-subtle: var(--color-gold-300); /** Content colour placed on feedback/warning/subtle. */
+  --color-feedback-info-bold: var(--color-blue-400); /** High-emphasis fill for a message reporting a neutral piece of information. */
+  --color-feedback-info-on-bold: var(--color-blue-950); /** Content colour placed on feedback/info/bold. */
+  --color-feedback-info-subtle: var(--color-blue-900); /** Tinted banner or inline-message fill reporting a neutral piece of information. */
+  --color-feedback-info-on-subtle: var(--color-blue-300); /** Content colour placed on feedback/info/subtle. */
+  --color-highlight-surface: var(--color-violet-900); /** Tinted fill marking the item currently highlighted or newly changed. */
+  --color-highlight-border: var(--color-violet-400); /** Edge that pairs with highlight/surface to make the highlight legible. */
+  --color-mascot-primary: var(--color-violet-500); /** Knowie's body colour. */
+  --color-mascot-eyes: var(--color-neutral-0); /** Knowie's eye whites. */
+  --color-mascot-pupils: var(--color-neutral-950); /** Knowie's pupils. */
+  --color-mascot-outline: var(--color-neutral-50); /** Knowie's outline stroke. */
+  --typography-display-l-font-family: var(--font-family-default);
+  --typography-display-l-font-weight: var(--font-weight-heavy);
+  --typography-display-l-font-size: var(--font-size-6xl);
+  --typography-display-l-line-height: var(--font-line-height-5xl);
+  --typography-display-l-letter-spacing: var(--font-tracking-tight);
+  --typography-display-m-font-family: var(--font-family-default);
+  --typography-display-m-font-weight: var(--font-weight-bold);
+  --typography-display-m-font-size: var(--font-size-5xl);
+  --typography-display-m-line-height: var(--font-line-height-4xl);
+  --typography-display-m-letter-spacing: var(--font-tracking-tight);
+  --typography-display-s-font-family: var(--font-family-default);
+  --typography-display-s-font-weight: var(--font-weight-bold);
+  --typography-display-s-font-size: var(--font-size-4xl);
+  --typography-display-s-line-height: var(--font-line-height-3xl);
+  --typography-display-s-letter-spacing: var(--font-tracking-tight);
+  --typography-headline-xl-font-family: var(--font-family-default);
+  --typography-headline-xl-font-weight: var(--font-weight-bold);
+  --typography-headline-xl-font-size: var(--font-size-3xl);
+  --typography-headline-xl-line-height: var(--font-line-height-2xl);
+  --typography-headline-xl-letter-spacing: var(--font-tracking-tight);
+  --typography-headline-l-font-family: var(--font-family-default);
+  --typography-headline-l-font-weight: var(--font-weight-bold);
+  --typography-headline-l-font-size: var(--font-size-2xl);
+  --typography-headline-l-line-height: var(--font-line-height-xl);
+  --typography-headline-l-letter-spacing: var(--font-tracking-tight);
+  --typography-headline-m-font-family: var(--font-family-default);
+  --typography-headline-m-font-weight: var(--font-weight-bold);
+  --typography-headline-m-font-size: var(--font-size-xl);
+  --typography-headline-m-line-height: var(--font-line-height-lg);
+  --typography-headline-m-letter-spacing: var(--font-tracking-tight);
+  --typography-headline-s-font-family: var(--font-family-default);
+  --typography-headline-s-font-weight: var(--font-weight-bold);
+  --typography-headline-s-font-size: var(--font-size-lg);
+  --typography-headline-s-line-height: var(--font-line-height-md);
+  --typography-headline-s-letter-spacing: var(--font-tracking-none);
+  --typography-headline-xs-bold-font-family: var(--font-family-default);
+  --typography-headline-xs-bold-font-weight: var(--font-weight-semibold);
+  --typography-headline-xs-bold-font-size: var(--font-size-md);
+  --typography-headline-xs-bold-line-height: var(--font-line-height-sm);
+  --typography-headline-xs-bold-letter-spacing: var(--font-tracking-loose);
+  --typography-headline-xs-regular-font-family: var(--font-family-default);
+  --typography-headline-xs-regular-font-weight: var(--font-weight-regular);
+  --typography-headline-xs-regular-font-size: var(--font-size-md);
+  --typography-headline-xs-regular-line-height: var(--font-line-height-sm);
+  --typography-headline-xs-regular-letter-spacing: var(--font-tracking-loose);
+  --typography-headline-xxs-bold-font-family: var(--font-family-default);
+  --typography-headline-xxs-bold-font-weight: var(--font-weight-semibold);
+  --typography-headline-xxs-bold-font-size: var(--font-size-sm);
+  --typography-headline-xxs-bold-line-height: var(--font-line-height-xs);
+  --typography-headline-xxs-bold-letter-spacing: var(--font-tracking-loose);
+  --typography-headline-xxs-regular-font-family: var(--font-family-default);
+  --typography-headline-xxs-regular-font-weight: var(--font-weight-regular);
+  --typography-headline-xxs-regular-font-size: var(--font-size-sm);
+  --typography-headline-xxs-regular-line-height: var(--font-line-height-xs);
+  --typography-headline-xxs-regular-letter-spacing: var(--font-tracking-loose);
+  --typography-body-m-bold-font-family: var(--font-family-default);
+  --typography-body-m-bold-font-weight: var(--font-weight-semibold);
+  --typography-body-m-bold-font-size: var(--font-size-md);
+  --typography-body-m-bold-line-height: var(--font-line-height-md);
+  --typography-body-m-bold-letter-spacing: var(--font-tracking-loose);
+  --typography-body-m-regular-font-family: var(--font-family-default);
+  --typography-body-m-regular-font-weight: var(--font-weight-regular);
+  --typography-body-m-regular-font-size: var(--font-size-md);
+  --typography-body-m-regular-line-height: var(--font-line-height-md);
+  --typography-body-m-regular-letter-spacing: var(--font-tracking-loose);
+  --typography-body-s-bold-font-family: var(--font-family-default);
+  --typography-body-s-bold-font-weight: var(--font-weight-semibold);
+  --typography-body-s-bold-font-size: var(--font-size-sm);
+  --typography-body-s-bold-line-height: var(--font-line-height-sm);
+  --typography-body-s-bold-letter-spacing: var(--font-tracking-loose);
+  --typography-body-s-regular-font-family: var(--font-family-default);
+  --typography-body-s-regular-font-weight: var(--font-weight-regular);
+  --typography-body-s-regular-font-size: var(--font-size-sm);
+  --typography-body-s-regular-line-height: var(--font-line-height-sm);
+  --typography-body-s-regular-letter-spacing: var(--font-tracking-loose);
+  --typography-caption-m-bold-font-family: var(--font-family-default);
+  --typography-caption-m-bold-font-weight: var(--font-weight-semibold);
+  --typography-caption-m-bold-font-size: var(--font-size-xs);
+  --typography-caption-m-bold-line-height: var(--font-line-height-xs);
+  --typography-caption-m-bold-letter-spacing: var(--font-tracking-loose);
+  --typography-caption-m-regular-font-family: var(--font-family-default);
+  --typography-caption-m-regular-font-weight: var(--font-weight-regular);
+  --typography-caption-m-regular-font-size: var(--font-size-xs);
+  --typography-caption-m-regular-line-height: var(--font-line-height-xs);
+  --typography-caption-m-regular-letter-spacing: var(--font-tracking-loose);
+  --typography-caption-s-bold-font-family: var(--font-family-default);
+  --typography-caption-s-bold-font-weight: var(--font-weight-semibold);
+  --typography-caption-s-bold-font-size: var(--font-size-2xs);
+  --typography-caption-s-bold-line-height: var(--font-line-height-2xs);
+  --typography-caption-s-bold-letter-spacing: var(--font-tracking-loose);
+  --typography-caption-s-regular-font-family: var(--font-family-default);
+  --typography-caption-s-regular-font-weight: var(--font-weight-regular);
+  --typography-caption-s-regular-font-size: var(--font-size-2xs);
+  --typography-caption-s-regular-line-height: var(--font-line-height-2xs);
+  --typography-caption-s-regular-letter-spacing: var(--font-tracking-loose);
+  --responsive-root-font-size: var(--font-size-root); /** Root font size that rem-based values resolve against; identical in all three breakpoints. */
+}
