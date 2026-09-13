@@ -168,6 +168,20 @@ question below, not a resolved rule. `surface=Surface` binds
 > is the line that names what unlocks the row. A locked row with a dimmed
 > subtitle stops explaining itself and starts just refusing.
 
+**Reversed since the above was written, on your own explicit decision:** an
+axe-core accessibility scan found `state=Locked`'s title on `text/disabled`
+failing contrast at 3.69:1 against `background/surface` (under the 4.5:1 AA
+minimum) — on the row's primary, load-bearing label, not the subtitle. Given
+the choice between fixing it in place or accepting the trade-off the Don't
+above describes, you chose to flip it: the title now stays on
+`text/secondary` (legible, still one step down from Default's
+`text/primary`) and the subtitle takes the dim (`text/disabled`) treatment
+instead. The reasoning in the original Don't still holds as a real
+trade-off — a locked row with a dimmed subtitle does explain itself less —
+it was just weighed against a real contrast failure on the title and lost.
+Treat this note as the current rule; the blockquote above is kept for the
+record, not as live guidance.
+
 **Two open questions, not yet decided:** whether `Pressed` should keep its
 `surface` fill and gain a separate overlay layer (right now Pressed and
 Stacking-when-pressed are pixel-identical, silently collapsing 4 of the 16

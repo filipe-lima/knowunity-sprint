@@ -1,0 +1,8 @@
+/* Loading-state rotation, shared by Button and ButtonIcon. Not sourced
+   from a token: no motion/duration token exists in tokens/tokens.json yet
+   — see the comment above Spinner in Spinner.tsx. */
+@keyframes ks-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

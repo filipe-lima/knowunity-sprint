@@ -223,7 +223,7 @@
   --color-accent-brand-bold: var(--color-violet-500); /** Saturated brand violet fill for badges, chips and accents that must carry weight. */
   --color-accent-brand-on-bold: var(--color-violet-950); /** Content colour placed on accent/brand/bold. */
   --color-accent-brand-subtle: var(--color-violet-900); /** Low-saturation brand violet fill for tinted containers and section backgrounds. */
-  --color-accent-brand-on-subtle: var(--color-violet-400); /** Content colour placed on accent/brand/subtle. */
+  --color-accent-brand-on-subtle: var(--color-violet-300); /** Content colour placed on accent/brand/subtle. Was violet.400 (4.09:1 against accent/brand/subtle, under the 4.5:1 AA minimum — found via an axe-core scan across XpPill, SessionHero and VerdictBadge, the three real components that use this pairing). violet.300 passes at 6.61:1 and stays visually distinct from accent/brand/bold, which is violet.500. */
   --color-accent-pro-bold: var(--color-gold-400); /** Saturated premium gold fill for badges, chips and accents that must carry weight. */
   --color-accent-pro-on-bold: var(--color-gold-950); /** Content colour placed on accent/pro/bold. */
   --color-accent-pro-subtle: var(--color-gold-900); /** Low-saturation premium gold fill for tinted containers and section backgrounds. */
