@@ -35,12 +35,13 @@
 | `docs/sprint-context.md` | Before designing any screen or flow — committed decisions + explicit non-goals. |
 | `docs/design-system.md` | Before building or styling any screen — component inventory, scaffold/slot rules, naming, the 15 "Never do this" rules. |
 | `tokens/tokens.json` | Whenever `design-system.md` names a token — look up its real value here. |
+| `build/css/tokens.css` | Never edit this file — it's generated from `tokens/tokens.json`. Change the token there and run `npm run tokens` to regenerate it. |
 | `docs/reference/*.png` | Comparing your design against the already-shipped beta (numbered flow screenshots). |
 | `.claude/skills/ux-designer/` | Designing a new flow — user psychology, IA, patterns. Read before `ui-designer`. |
 | `.claude/skills/ui-designer/` | Styling/building a flow already decided — visual system, components, polish. |
 | `.claude/skills/ux-motion/` | Implementing any transition or micro-interaction — timing, easing, choreography. |
 | `.claude/skills/interactive-prototype/` | Building a swipeable/gestural high-fidelity React prototype artifact of a flow. |
-| `app/layout.tsx`, `app/page.tsx`, `app/globals.css` | Editing the actual app — currently unmodified `create-next-app` scaffold. |
+| `app/layout.tsx`, `app/page.tsx`, `app/globals.css` | Editing the actual app — still the `create-next-app` scaffold, except `globals.css` now also imports `build/css/tokens.css`. |
 | `public/*.svg`, `app/favicon.ico` | Default Next.js placeholder assets — replace once real UI lands. |
 | `public/images/Knowie.png` | The Knowie mascot asset. |
 | `package.json`, `tsconfig.json`, `next.config.ts`, `eslint.config.mjs`, `postcss.config.mjs` | Changing build, lint, or type config. |
