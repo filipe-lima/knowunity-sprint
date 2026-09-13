@@ -45,6 +45,15 @@ const preview: Preview = {
           styles: { width: '390px', height: '844px' },
           type: 'mobile',
         },
+        // For reference pages (e.g. the token foundations stories) that
+        // aren't a screen at all and need the room — set via that story's
+        // own `globals.viewport`, which locks the toolbar to this and wins
+        // over the project default below.
+        fill: {
+          name: 'Fill',
+          styles: { width: '100%', height: '100%' },
+          type: 'desktop',
+        },
       },
     },
   },

@@ -1,34 +1,17 @@
 import StyleDictionary from 'style-dictionary';
+import { cssVariableName } from './tokens/css-variable-name.mjs';
 
 // A "transform" is a small function Style Dictionary runs on every token
-// before it writes it out. This one decides the CSS variable's *name*.
-//
-// The rule: use the token's own path, unchanged, joined with hyphens
-// ("interactive.primary.default" -> "interactive-primary-default"). The one
-// addition is that any token whose $type is "color" gets a "color" segment
-// stitched onto the front — unless its path already starts with "color" (so
-// the raw palette entries in tokens.json, which already live under a
-// top-level "color" group, don't end up double-prefixed as
-// --color-color-navy-800). That's what turns interactive.primary.default
-// into --color-interactive-primary-default instead of the unprefixed
-// --interactive-primary-default: every color, wherever it lives in the
-// file, is discoverable under the same --color- namespace.
-function kebab(segment) {
-  return String(segment)
-    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
-    .toLowerCase();
-}
-
+// before it writes it out. This one decides the CSS variable's *name*, using
+// the shared cssVariableName helper (also read by the Storybook foundations
+// stories) so both always agree on what a token is called. See that file for
+// the naming rule itself.
 StyleDictionary.registerTransform({
   name: 'name/path-kebab',
   type: 'name',
   transform: (token) => {
-    const path = [...token.path];
     const type = token.$type ?? token.type;
-    if (type === 'color' && path[0] !== 'color') {
-      path.unshift('color');
-    }
-    return path.map(kebab).join('-');
+    return cssVariableName(token.path, type);
   },
 });
 
