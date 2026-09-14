@@ -127,8 +127,8 @@
   --blur-800: 32px;
   --stroke-border: 1px;
   --stroke-heavy-border: 2px;
-  --font-family-default: 'Greed Standard-TRIAL';
-  --font-family-display: 'Greed Condensed-TRIAL';
+  --font-family-default: 'Greed Standard-TRIAL', -apple-system, 'SF Pro Display', system-ui, sans-serif; /** No 'Greed Standard-TRIAL' font file exists anywhere in this repo (checked directly, not assumed) — every component built against this token has been rendering in the browser's fallback font all along. Added a real iOS-appropriate fallback stack so that's a graceful degrade instead of an undefined one; swap in a real @font-face once the file is provided, don't remove the fallback. */
+  --font-family-display: 'Greed Condensed-TRIAL', -apple-system, 'SF Pro Display', system-ui, sans-serif; /** Same missing-font situation as font.family.default — see that token's description. */
   --font-weight-regular: regular;
   --font-weight-semibold: semi-bold;
   --font-weight-bold: bold;

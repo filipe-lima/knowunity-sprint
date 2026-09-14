@@ -105,3 +105,13 @@ export const TertiaryDisabled: Story = {
 export const TertiaryLoading: Story = {
   args: { variant: 'Tertiary', state: 'Loading' },
 };
+
+// Not a Figma variant — added for components/ButtonGroup, whose real
+// instances place this component with layoutSizingHorizontal: FILL
+// (confirmed directly against Hub's own real buttonGroup). Every story
+// above leaves `fill` at its default false, matching the component's own
+// resting, label-hugging look everywhere else it's used.
+export const Fill: Story = {
+  args: { variant: 'Primary', cta: 'Start Research Methods', fill: true },
+  parameters: { layout: 'padded' },
+};

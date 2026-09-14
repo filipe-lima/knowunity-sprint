@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
 import { MascotSlot } from './MascotSlot';
+import { MascotArt } from '../shared/MascotArt';
 
 // No Figma description exists on this component (its own metadata field is
 // literally null) — mascotSlot predates the file's documentation pass and
@@ -93,4 +94,19 @@ export const XLPeek: Story = {
 export const TwoXLPeek: Story = {
   name: '2XL, Peek',
   args: { size: '2XL', crop: 'Peek' },
+};
+
+// The real Knowie artwork (components/shared/MascotArt), not the
+// placeholder circle every story above still uses deliberately (those
+// exist to demonstrate size/crop mechanics, not artwork) — see
+// MascotArt's own doc comment for where these two poses came from.
+
+export const RealArtworkStandby: Story = {
+  name: 'Real artwork — standby',
+  args: { size: '3XL', crop: 'Full', children: <MascotArt pose="standby" /> },
+};
+
+export const RealArtworkApproving: Story = {
+  name: 'Real artwork — approving',
+  args: { size: '3XL', crop: 'Full', children: <MascotArt pose="approving" /> },
 };

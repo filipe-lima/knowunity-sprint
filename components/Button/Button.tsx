@@ -33,6 +33,19 @@ export interface ButtonProps
    */
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  /**
+   * Not a Figma property — the real component's pill always hugs its own
+   * label, centered in a fixed-width-hugging wrapper. But the real
+   * `buttonGroup` instances (components/ButtonGroup) place this component
+   * with `layoutSizingHorizontal: FILL` (confirmed directly against Hub's
+   * own real buttonGroup instance: both real button children measure the
+   * full 358px row width, not their own label's hug width) — something
+   * this component had no way to reproduce until now. `fill` stretches
+   * both the tap-target wrapper and the visible pill to the container's
+   * width; default false preserves every existing story and every other
+   * real usage (ListRow's trailing slot, Sheet's actions) untouched.
+   */
+  fill?: boolean;
 }
 
 // wrapper = the fixed-height tap target (accessibility hit area).
@@ -112,6 +125,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     showRightIcon = false,
     leftIcon,
     rightIcon,
+    fill = false,
     onClick,
     type = 'button',
     ...rest
@@ -145,8 +159,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center',
+        width: fill ? '100%' : undefined,
         minWidth: 'var(--control-600)',
         minHeight: WRAPPER_MIN_HEIGHT[size],
+        boxSizing: 'border-box',
         background: 'transparent',
         border: 'none',
         padding: 'var(--space-0)',
@@ -162,6 +178,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
+          width: fill ? '100%' : undefined,
+          boxSizing: 'border-box',
           height: PILL_HEIGHT[size],
           paddingLeft: variant === 'Tertiary' ? 'var(--space-0)' : PILL_PADDING_X[size],
           paddingRight: variant === 'Tertiary' ? 'var(--space-0)' : PILL_PADDING_X[size],
