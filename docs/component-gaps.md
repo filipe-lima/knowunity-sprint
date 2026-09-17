@@ -235,3 +235,23 @@ of building a second inline copy (see the skill for that process).
   `text/secondary` (was defaulting to `text/primary` before — a real
   color fix, not just a shape one). Row titles and subtitles are both
   real 12px (`--font-size-xs`), not the 15px used before.
+- **`components/StatusBar/StatusBar.tsx` — built, reversed, rebuilt, then
+  deleted for good, 2026-09-17.** Not an inline-screen gap like the rest
+  of this file, but the same "assumption written from how the prototype
+  was actually reviewed, corrected once that assumption changed" story,
+  worth keeping for the record. Rendered a mocked "9:41" + signal/Wi-Fi/
+  battery status bar inside `Scaffold`'s Panel Header, unconditionally,
+  on every screen. Originally left empty ("a real mobile browser already
+  provides that above the page"), reversed to render it because the
+  prototype was actually being reviewed as phone-shaped screenshots
+  inside a desktop browser, where that reasoning didn't hold. Reversed
+  again, for good, once tested on a real smartphone: there the phone's
+  own OS status bar already sits above the browser viewport, so the fake
+  one directly duplicated it (wrong time, wrong signal state, visually
+  conflicting with the real device chrome). This time the whole Panel
+  Header region was removed too, not just its content — an empty filled
+  strip with a divider and nothing in it would have been just as wrong
+  an assumption to bake in. Every screen now starts flush at the
+  scaffold's own top rounded corner. Not a Figma content correction — the
+  real Figma frames genuinely do show a status bar in their own static
+  mockup context, which has no real device chrome to defer to.

@@ -10,9 +10,7 @@ import { Sheet } from '../Sheet/Sheet';
 // the file itself doesn't enforce any of this, which is why it's written
 // down there and reproduced here rather than paraphrased.
 const DESIGN_SYSTEM_ACCOUNT = `
-One vertical auto-layout root, sized by its size variant, with a fixed header and four slots. All four slots stretch their child on insert, none declare a minimum or maximum, and none restrict what can be dropped in.
-
-**Panel Header (fixed, not a slot).** Holds the status bar only. Never put content here, and never hide it to reclaim the height.
+One vertical auto-layout root, sized by its size variant, with four slots. All four slots stretch their child on insert, none declare a minimum or maximum, and none restrict what can be dropped in.
 
 **topNavigation.** Back and close actions, the screen title, streak and counter chips, right-hand actions. Hugs its content, so it grows with what you put in it. Gate it with showTopNavSlot; do not delete the contents to hide it.
 
@@ -24,7 +22,7 @@ One vertical auto-layout root, sized by its size variant, with a fixed header an
 
 Two warnings. The scaffold's main component set is not on any page in the file; it survives only because instances point at it. And the slots' preferred-value lists are a convenience, not a constraint, so a wrong component will drop into a slot without complaint.
 
-**Don't.** Never build a screen outside the scaffold, and never put content in the Panel Header or outside the four slots.
+**Don't.** Never build a screen outside the scaffold, and never put content outside the four slots.
 `.trim();
 
 const meta = {

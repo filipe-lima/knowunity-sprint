@@ -90,13 +90,24 @@ it fit. An unmet need is a system gap to write down, not a local override.
 
 ## The scaffold
 
-One vertical auto-layout root, sized by its `size` variant, with a fixed header
-and four slots. All four slots stretch their child on insert, none declare a
-minimum or maximum, and none restrict what can be dropped in. The file does not
-enforce any of what follows, which is why it is written down.
+One vertical auto-layout root, sized by its `size` variant, with four slots.
+All four slots stretch their child on insert, none declare a minimum or
+maximum, and none restrict what can be dropped in. The file does not enforce
+any of what follows, which is why it is written down.
 
-**Panel Header (fixed, not a slot).** Holds the status bar only. Never put
-content here, and never hide it to reclaim the height.
+**Removed 2026-09-17: the Panel Header region (a fixed, non-slot 48px strip
+holding a mocked status bar — time, signal, Wi-Fi, battery).** Built, then
+briefly removed, then reversed back in on the reasoning that this prototype
+was reviewed as phone-shaped screenshots inside a desktop browser, where
+nothing shows a status bar unless the app draws one itself. Reversed again,
+for good, once actually tested on a real smartphone: there, the phone's own
+OS status bar already sits above the browser viewport, so the fake one
+directly duplicated it. Removed the whole region, not just its content, since
+an empty filled strip with a divider and nothing in it would have been just
+as wrong an assumption to keep. `components/StatusBar/StatusBar.tsx` (the
+component that lived here) is deleted; see `docs/component-gaps.md` for the
+full history. Every screen now starts flush at the scaffold's own top rounded
+corner.
 
 **`topNavigation`.** Back and close actions, the screen title, streak and
 counter chips, right-hand actions. Hugs its content, so it grows with what you
@@ -871,8 +882,8 @@ Role, size and weight are all part of the name, so `Body M Bold` and
 7. **Never hand-resize a component wrapper** to reach a size between two steps.
    iconSlot in particular has six fixed steps and no in-between.
 
-8. **Never build a screen outside the scaffold**, and never put content in the
-   Panel Header or outside the four slots.
+8. **Never build a screen outside the scaffold**, and never put content
+   outside the four slots.
 
 9. **Never mix a documented component set with its library twin on one screen.**
    The twins fork on variant axes (iconSlot's size axis is named differently in

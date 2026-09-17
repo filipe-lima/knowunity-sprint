@@ -1,7 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import { StatusBar } from '../StatusBar/StatusBar';
-
 /**
  * Read from the Figma component "scaffold" (file u3BZUg8k5p3mrOrKAnYO5c).
  * docs/design-system.md documents it in prose (its main component set
@@ -20,23 +18,27 @@ import { StatusBar } from '../StatusBar/StatusBar';
  * fill), and `background/scrim` (the sheet backdrop). All map directly to
  * this file's own tokens/tokens.json under the same names.
  *
- * Two real values have no exact token match, flagged rather than invented
- * as new ones (design-system.md rule 12: never add a token to make one
- * component work): Panel Header's real bottom divider is Figma's
- * `Core/Grayscale/Dividers` at 15% white in dark mode, which this file's
- * closest real token (`border.default`, 10.2% white) doesn't hit exactly
- * — used anyway since it's already the semantic wrapper for "the default
- * for dividers." And Panel Header's own height (48) has no governing
- * token; reproduced as a literal.
- *
- * Panel Header renders a real `components/StatusBar/StatusBar.tsx` —
- * reversed from an earlier call this session to leave it empty ("a real
- * mobile browser already provides that above the page"). That reasoning
- * assumed this would be viewed running on an actual phone; it's reviewed
- * as phone-shaped screenshots in a desktop browser instead, so nothing
- * shows a status bar unless this component draws one. Unconditional, not
- * a prop — design-system.md: "Holds the status bar only," and every real
- * instance shows the identical bar.
+ * **Panel Header — built, then removed entirely 2026-09-17.** The real
+ * Figma instance has one (real bound `background/stacking` fill, a
+ * divider at Figma's `Core/Grayscale/Dividers`, 48px height with no
+ * governing token) holding a mocked "9:41" + signal/Wi-Fi/battery status
+ * bar (`components/StatusBar/StatusBar.tsx`, since deleted). Built once,
+ * removed once already the same session ("a real mobile browser already
+ * provides that above the page"), then reversed back in on the reasoning
+ * that the prototype was being reviewed as phone-shaped screenshots
+ * inside a desktop browser, where nothing shows a status bar unless this
+ * component draws one. **Reversed again, for good, once actually tested
+ * on a real smartphone:** there, the phone's own OS status bar already
+ * sits above the browser viewport, so this app's fake one directly
+ * duplicated it — wrong time, wrong signal state, visually conflicting
+ * with the real device chrome. Removed the whole region, not just its
+ * content — an empty 48px filled strip with a divider and nothing in it
+ * would have been just as wrong an assumption to bake in as the
+ * duplicated status bar was. Every screen's `topNavigation`/`middleContent`
+ * now starts flush at the scaffold's own top rounded corner. Not a Figma
+ * content error — a static design tool has no real device chrome to
+ * defer to, so the real Figma frame's own status bar stays exactly as
+ * it is; this is a code-only, real-device-testing correction.
  *
  * `bottomSheetOnly` and its scrim are real `ABSOLUTE`-positioned layers in
  * Figma (confirmed via `layoutPositioning`), not part of the normal
@@ -91,23 +93,6 @@ export function Scaffold({
       }}
       {...rest}
     >
-      {/* Panel Header — fixed, not a slot. Status bar region only.
-          aria-hidden: the "9:41" time and signal/wifi/battery icons are
-          decorative device chrome, not real system status — announcing
-          them to a screen reader would be actively misleading. */}
-      <div
-        aria-hidden="true"
-        style={{
-          flexShrink: 0,
-          width: '100%',
-          height: '48px',
-          background: 'var(--color-background-stacking)',
-          borderBottom: '1px solid var(--color-border-default)',
-        }}
-      >
-        <StatusBar />
-      </div>
-
       {showTopNavSlot && topNavigation ? (
         <div
           style={{
