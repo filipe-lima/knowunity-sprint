@@ -12,7 +12,7 @@
 - Mobile iOS, 390px, dark mode only — one colour mode, no other breakpoints this sprint.
 - The recall is mocked: no speech-to-text, no audio, no model calls of any kind.
 - Sentence case on every label, button, and heading — capitals only for proper nouns.
-- Every colour/space/radius/type value comes from `tokens/tokens.json`, named via `docs/design-system.md` — never a hand-typed value, never a CSS fallback (`var(--x, #333)`).
+- Every colour/space/radius/type value comes from `tokens/tokens.json`, named via `docs/design-system.md` — never a hand-typed value, never a CSS fallback (`var(--x, #333)`). `npm run check:tokens` catches raw hex colors in `components/` — run it after building or editing anything there.
 - Build from the components already listed in `docs/design-system.md`. If none fits, say so and flag it as a system gap — don't stretch, detach, or invent a new one silently.
 - Every screen is built on `scaffold` — no bare frames.
 - Locked product decisions and out-of-scope items live in `docs/sprint-context.md` — treat both lists as binding, not advisory.
