@@ -29,8 +29,15 @@ import { MascotArt } from '../../components/shared/MascotArt';
  * Primary/L, no `ButtonGroup`) — there is no "Try again" button on either
  * real instance, contradicting this project's own earlier assumption
  * (SPEC.md said so too, itself stale). The partial instance uses a real
- * `ButtonGroup` (Vertical, L — not M) with "Keep going, N terms left"
- * (Primary) and "Back to Recall" (Secondary).
+ * `ButtonGroup` (Vertical, L — not M). **Updated 2026-09-17, on direct
+ * request, overriding this file's own real instance:** "Back to Recall"
+ * is now Primary (and sits on top, per `ButtonGroup` Vertical's own
+ * "primary above secondary" rule), "Keep going, N terms left" is now
+ * Secondary — the real committed Figma frame (node `13759:45754`) still
+ * has them the other way around; this is a deliberate departure, pushed
+ * back into that frame too (`COMMITED FLOW FINAL WITHOUT COMPONENTS`),
+ * not an unnoticed drift. See `docs/sprint-context.md` and
+ * `docs/SPEC.md` §2 for the same note.
  *
  * Row icon/color, confirmed by resolving each icon's real bound Figma
  * variable (not guessed): "Said it unaided" and "Revealed, then said back
@@ -244,16 +251,16 @@ export function Summary({
             variant="Vertical"
             size="L"
             primary={
+              <Button variant="Primary" size="L" cta="Back to Recall" fill onClick={() => router.push('/hub')} />
+            }
+            secondary={
               <Button
-                variant="Primary"
+                variant="Secondary"
                 size="L"
                 cta={`Keep going, ${remainingCount} terms left`}
                 fill
                 onClick={() => router.push('/loop')}
               />
-            }
-            secondary={
-              <Button variant="Secondary" size="L" cta="Back to Recall" fill onClick={() => router.push('/hub')} />
             }
           />
         )

@@ -99,8 +99,14 @@ both use `text/secondary` (info-circle / skip-forward respectively).
 
 **States.**
 - **Regular summary** — `SessionHero` headline + total-XP pill, one row
-  per resolved outcome, `ButtonGroup` (Vertical, **L**) with "Keep going,
-  N terms left" (Primary) and "Back to Recall" (Secondary).
+  per resolved outcome, `ButtonGroup` (Vertical, **L**) with "Back to
+  Recall" (Primary) and "Keep going, N terms left" (Secondary).
+  **Updated 2026-09-17, on direct request, overriding the real committed
+  Figma frame** (`Summary 3`, node `13759:45754`, which has these the
+  other way around — "Keep going" Primary, "Back to Recall" Secondary):
+  a deliberate departure, pushed back into
+  `COMMITED FLOW FINAL WITHOUT COMPONENTS` too, not a drift left
+  unreconciled.
 - **All-clear** — same shape, `MascotSlot` XL carries the one pose change
   in the whole flow (standby → approving; no visible transition on
   arrival, per the interview). Bottom action is **one** `Button`
