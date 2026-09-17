@@ -8,6 +8,8 @@ import { Button } from '../Button/Button';
 // field, unedited.
 const FIGMA_DESCRIPTION = `
 The answer control at the bottom of the loop. Built with 2 of the plan's 4 states -- Idle and Recording -- because those are the only two drawn anywhere in the file (48 real instances between them). Submitting and Disabled are listed in the plan as undesigned gaps; per Filipe, not invented here, add as separate variants once designed. Fixed height 215 on both variants (Recording's own natural height with Escape collapsed), centered, so switching state does not reflow bottomContent.
+
+**Paused added 2026-09-16, on direct request, overriding sprint-context.md's locked "No pause/resume" decision.** No real Figma instance existed for it either -- added live to the real component set (node 13734:32389) alongside this code, built from Recording's own real layout (a third Pause/Resume ButtonIcon between Discard and Submit, amplitude bars dimmed to read as frozen -- the dim amount has no governing token, flagged in docs/component-gaps.md).
 `.trim();
 
 const meta = {
@@ -25,7 +27,7 @@ const meta = {
   argTypes: {
     state: {
       control: 'radio',
-      options: ['Idle', 'Recording'],
+      options: ['Idle', 'Recording', 'Paused'],
     },
   },
 } satisfies Meta<typeof RecordControl>;
@@ -47,5 +49,11 @@ export const Idle: Story = {
 export const Recording: Story = {
   args: {
     state: 'Recording',
+  },
+};
+
+export const Paused: Story = {
+  args: {
+    state: 'Paused',
   },
 };

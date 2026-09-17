@@ -19,9 +19,17 @@ scaffold instance at `size=iPhone 13`. Nothing is placed on a bare frame.
 scrolls underneath it. Its fill is a gradient scrim, not a solid bar, so it
 separates by fade rather than by a border. If the header sits on a static
 screen, use a plain row in the slot instead. Its six variants describe the
-action layout, not the screen it belongs to. Note: this is the desktop, 1200px
-library component with zero instances anywhere in the file. The mobile top bar
-for this feature is `topBar` (below), not this component; leave `appBar` alone.
+action layout, not the screen it belongs to. **Corrected 2026-09-16:** this
+used to say "zero instances anywhere in the file" — false. `Hub C — The
+queue`'s own real instance (node `13759:45277`) genuinely uses `appBar`
+(`variant="leftIconButtonOnly"`), confirmed live. `screens/Hub/RecallHub.tsx`
+still doesn't reproduce it — it uses the plain back-icon-plus-title row this
+paragraph otherwise prescribes for static screens (`scaffoldHeader`,
+promoted 2026-09-17 to `components/ScaffoldHeader/ScaffoldHeader.tsx`,
+shared with Recall history — see its own section below) — a deliberate
+choice, not a contradiction resolved by editing code; see `docs/SPEC.md`
+§3. The mobile top bar for this
+feature is `topBar` (below), not this component.
 
 ### Actions
 
@@ -323,22 +331,42 @@ currently reads as `Done` on the pip row — a gap, not a decision.
 
 ### `recordControl`
 
-**States and options.** Two of the plan's four states are built: `state=Idle`
-and `state=Recording`. `Submitting` and `Disabled` were never drawn anywhere in
-the file (no real content to build from) and were deliberately left out rather
-than invented — add them to this same set once they're designed.
+**States and options.** Three of the plan's four states are built:
+`state=Idle`, `state=Recording`, and `state=Paused`. `Submitting` and
+`Disabled` were never drawn anywhere in the file (no real content to
+build from) and were deliberately left out rather than invented — add
+them to this same set once they're designed. **`Paused` added
+2026-09-16, on direct request, overriding this project's earlier "no
+pause/resume" decision** — added live to the real component set (node
+`13734:32389`), not just built in code, since no Figma reference existed
+either: cloned from `Recording`, with a third `Pause`/`Resume` control
+between Discard and Submit (no real icon asset for either in this file's
+library — reuses `Discard`'s real button shape with a different label,
+same resolution as the correction control's own missing pencil icon) and
+the amplitude bars dimmed (opacity `0.4`, no governing token in
+`tokens/tokens.json` — a hand-typed value, flagged in
+`docs/component-gaps.md` rather than inventing a token for one use).
 
-**Other properties.** `caption` TEXT (defaults "Tap to answer" / "Listening").
-One slot, `Escape` — holds the tertiary "I can't speak right now" button by
-default in Idle, and is meant to collapse in Recording. Both variants share a
-fixed height (215) so switching state doesn't reflow the screen around it.
+**Other properties.** `caption` TEXT (defaults "Tap to answer" /
+"Listening" / "Paused"). One slot, `Escape` — holds the tertiary "I can't
+speak right now" button by default in Idle, and is meant to collapse in
+Recording/Paused. All three variants share a fixed height (215) so
+switching state doesn't reflow the screen around it.
 
 **What each state means.** Idle shows a 56px primary mic button
-(`buttonIcon`, `Primary`/`L`) plus the caption and the Escape slot. Recording
-replaces the mic with an amplitude meter (11 bars — a snapshot of one real
-waveform, not a token, so don't treat its exact bar heights as meaningful) and
-a Discard/Submit action row, and widens the outer spacing from `Space/300` to
-`Space/400`.
+(`buttonIcon`, `Primary`/`L`) plus the caption and the Escape slot.
+Recording replaces the mic with an amplitude meter (11 bars — each bar's
+literal height is Figma's own snapshot of one real waveform, used as its
+resting/max height, not a meaningful exact value on its own) and a
+Discard/Pause/Submit action row, and widens the outer spacing from
+`Space/300` to `Space/400`. **Updated 2026-09-17, on direct request:**
+Recording's meter now animates live — a simulated per-bar wave, code-only
+since Figma frames can't represent motion (there's no live audio signal
+in this app to actually react to; see the "recall is mocked" hard rule).
+Paused is the same layout with `Resume` in place of `Pause` and the
+amplitude bars dimmed to read as frozen (both faded and static — distinct
+from the new `amplitudeFrozen` prop, which freezes without fading, used
+by Loop's Transcribing beat).
 
 **When to reach for it.** The description below still names four states; only
 two exist today. Treat "Submitting" and "disabled" in the text as intent, not
@@ -593,6 +621,85 @@ category of value as `termPip`'s row width.
 component yet, here or in Figma. Nothing is filled in below in its place —
 write one when you're ready, following the same "what it is / when to reach
 for it / don't" shape as the rest of this file.
+
+---
+
+## Components built 16 September
+
+Both built for the Home screen — the first screen in this codebase that
+needed either of them.
+
+### `navbar`
+
+**States and options.** `tabs`, an array of `NavigationButtonProps`
+(`icon`, `state`: Active/Inactive, `label`, `hasLabel`, `color` override).
+`avatar`, a trailing slot. The real Figma component also carries `Scrim`,
+`# of tabs`, and `Border` properties — only the confirmed 5-tab, no-scrim,
+no-border real instance is built; other counts aren't confirmed.
+
+**What each state means.** `Active` uses `interactive/primary` (mapped to
+this codebase's `--color-interactive-primary-default`, the closest real
+match — the Figma variable name itself has no exact token counterpart).
+`Inactive` uses `text/secondary`. One real tab resolved to a Figma
+variable (`palette/blue/tint`) with no match in this codebase's tokens at
+all — exposed as a per-tab `color` override rather than baked in, since
+it may be an authoring mistake rather than a deliberate signal (see
+`docs/component-gaps.md`).
+
+**When to reach for it.**
+
+> The bottom-most element of a full app screen.
+
+### `avatar`
+
+**States and options.** `type` (Image/Initial) × `size` (Large/Medium/
+Small) × `shape` (Circle — the only real shape, no Square variant exists
+in the component set).
+
+**What each state means.** `Image` takes real photo content via
+`children` (no real asset exists in this codebase, same resolution as
+every other image/glyph slot). `Initial` renders `initials` as plain
+text. Per-size pixel dimensions aren't fully confirmed — the Desktop
+Bridge connection dropped mid-session before each variant's own intrinsic
+size could be checked; only `Large` (24px, in the Navbar) was confirmed
+directly (see `docs/component-gaps.md`).
+
+**When to reach for it.**
+
+> `Navbar`'s trailing slot, for the signed-in student.
+
+### `scaffoldHeader`
+
+**States and options.** None — a single component, not a set, and not a
+real Figma component at all: promoted 2026-09-17 from
+`screens/Hub/ScaffoldHeader.tsx` once a second real screen
+(`RecallHistory`) needed the identical shape, per `docs/component-gaps.md`'s
+own promotion rule.
+
+**Other properties.** `title` TEXT, `onBack` a click handler on the
+leading back control (a real `buttonIcon`, Tertiary/M).
+
+**What it means.** A back icon, absolutely positioned at the leading
+edge, plus a title centered independent of it — not left-aligned next to
+the icon. **Live-checked against Hub C's real `appBar` instance on
+promotion:** its real back icon (`arrow-left`) sits in a real 48×48
+button, exactly `ButtonIcon` Tertiary/M's own real size, and its real
+title text is 15px SemiBold — both already exact matches for this
+component's own type and icon before promotion, nothing corrected. The
+one real, deliberate divergence: appBar's own real layout is
+left-aligned (icon then text), not centered — this component
+intentionally does not reproduce that, matching this file's own rule
+above that a static (non-scrolling) screen gets a plain row instead of
+`appBar`. Added live to Figma's "New components" page on promotion too,
+reusing the real `arrow-left` icon cloned from Hub C's own appBar
+instance rather than redrawing it — see that component's own
+description for exactly what's reused vs. recomposed.
+
+**When to reach for it.**
+
+> A static (non-scrolling) screen's top navigation needing a back action
+> plus a centered title — confirmed real usage: `RecallHub`,
+> `RecallHistory`.
 
 ---
 

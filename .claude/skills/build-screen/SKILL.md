@@ -10,6 +10,16 @@ a mobile-only, dark-mode-only voice recall prototype, matching a Figma file
 component-by-component. Screens are compositions of that library, not new
 design work. Follow this method in order every time.
 
+## Where screens live
+
+Every screen is a page in the app, at its own route
+(`app/<route>/page.tsx`, composing a `screens/<Name>/<Name>.tsx`), reachable
+by clicking from the screen before it — not a standalone artifact. Storybook
+is the catalog for components only; it is never where a screen lives. A
+screen that only exists as a Storybook story is not built, no matter how
+complete that story looks — it still needs a real route and a real way to
+reach it from whatever screen precedes it in the flow.
+
 ## 1. Read `docs/SPEC.md` for this screen
 
 Find this screen's entry: its states, which real components it names, and
@@ -81,6 +91,16 @@ One color mode, no breakpoints, no responsive variants. Build to the same
 
 If `SPEC.md` lists a failure path, an empty state, or an edge case for this
 screen, build it — don't ship only the happy path and call the screen done.
+
+## 9. Every action goes where `SPEC.md` says it goes
+
+Every tap `SPEC.md` describes for this screen needs a real destination or a
+real effect — a route it navigates to, a state it changes, a sheet it opens.
+A button that renders correctly but leads nowhere is not a finished screen,
+even if every other part of it matches Figma pixel-for-pixel. Where
+`SPEC.md` doesn't specify a destination (or marks one under Open), say so
+in your final report rather than inventing one or leaving the tap silently
+inert without flagging it.
 
 ---
 

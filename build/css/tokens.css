@@ -129,10 +129,10 @@
   --stroke-heavy-border: 2px;
   --font-family-default: 'Greed Standard-TRIAL', -apple-system, 'SF Pro Display', system-ui, sans-serif; /** No 'Greed Standard-TRIAL' font file exists anywhere in this repo (checked directly, not assumed) — every component built against this token has been rendering in the browser's fallback font all along. Added a real iOS-appropriate fallback stack so that's a graceful degrade instead of an undefined one; swap in a real @font-face once the file is provided, don't remove the fallback. */
   --font-family-display: 'Greed Condensed-TRIAL', -apple-system, 'SF Pro Display', system-ui, sans-serif; /** Same missing-font situation as font.family.default — see that token's description. */
-  --font-weight-regular: regular;
-  --font-weight-semibold: semi-bold;
-  --font-weight-bold: bold;
-  --font-weight-heavy: heavy;
+  --font-weight-regular: 400; /** Was the string "regular" — not a valid CSS font-weight value (only bold/normal/bolder/lighter or a number are), so this was silently a no-op everywhere it was used. Real numeric value matches the Regular file in public/fonts/greed-standard. */
+  --font-weight-semibold: 600; /** Was the string "semi-bold" — same invalid-CSS-value bug as regular/heavy. Matches the SemiBold file in public/fonts/greed-standard. */
+  --font-weight-bold: 700; /** "bold" was already a valid CSS keyword (700) so this one actually worked before — changed to the numeric value anyway for consistency with the other three, and so it lines up with the Bold @font-face file's own declared weight. */
+  --font-weight-heavy: 900; /** Was the string "heavy" — same invalid-CSS-value bug as regular/semibold. Matches the Heavy file in public/fonts/greed-standard. */
   --font-size-2xs: 9px;
   --font-size-xs: 12px;
   --font-size-sm: 15px;
@@ -171,6 +171,7 @@
   --color-background-stacking: var(--color-alpha-light-10); /** Fill for a surface layered directly on top of another surface, so the stack stays readable. */
   --color-background-inverse: var(--color-violet-50); /** Light background for blocks that must invert against the dark UI, such as a high-emphasis banner. */
   --color-background-scrim: var(--color-alpha-dark-50); /** Dimming layer behind modals and sheets that mutes the content underneath. */
+  --color-background-shell: var(--color-neutral-950); /** The browser canvas surrounding the 390px device frame (app/globals.css body) — deliberately distinct from background/page, which is the device frame's own fill. Without a visible difference between the two, the frame has no visible edge and a screen with little content looks like it has the wrong height. A true neutral, not navy-tinted, so the frame reads as a separate object sitting on top of it. */
   --color-interactive-primary-default: var(--color-violet-50); /** Fill for the single most important action in a view. */
   --color-interactive-primary-hover: var(--color-violet-200); /** Primary action fill while the pointer rests on it. */
   --color-interactive-primary-active: var(--color-violet-250); /** Primary action fill while it is being pressed. */

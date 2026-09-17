@@ -1,5 +1,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
+import { StatusBar } from '../StatusBar/StatusBar';
+
 /**
  * Read from the Figma component "scaffold" (file u3BZUg8k5p3mrOrKAnYO5c).
  * docs/design-system.md documents it in prose (its main component set
@@ -27,13 +29,14 @@ import type { HTMLAttributes, ReactNode } from 'react';
  * for dividers." And Panel Header's own height (48) has no governing
  * token; reproduced as a literal.
  *
- * Panel Header is deliberately built empty. design-system.md: "Holds the
- * status bar only. Never put content here." The real instance's own child
- * is a `Status Bar` component that doesn't exist in this codebase and
- * isn't worth building — it's OS chrome (clock, signal, battery), and a
- * real mobile browser already provides that above the page. This
- * component only reserves the height and paints the fill/divider a real
- * screen would sit under.
+ * Panel Header renders a real `components/StatusBar/StatusBar.tsx` —
+ * reversed from an earlier call this session to leave it empty ("a real
+ * mobile browser already provides that above the page"). That reasoning
+ * assumed this would be viewed running on an actual phone; it's reviewed
+ * as phone-shaped screenshots in a desktop browser instead, so nothing
+ * shows a status bar unless this component draws one. Unconditional, not
+ * a prop — design-system.md: "Holds the status bar only," and every real
+ * instance shows the identical bar.
  *
  * `bottomSheetOnly` and its scrim are real `ABSOLUTE`-positioned layers in
  * Figma (confirmed via `layoutPositioning`), not part of the normal
@@ -88,7 +91,10 @@ export function Scaffold({
       }}
       {...rest}
     >
-      {/* Panel Header — fixed, not a slot. Status bar region only. */}
+      {/* Panel Header — fixed, not a slot. Status bar region only.
+          aria-hidden: the "9:41" time and signal/wifi/battery icons are
+          decorative device chrome, not real system status — announcing
+          them to a screen reader would be actively misleading. */}
       <div
         aria-hidden="true"
         style={{
@@ -98,7 +104,9 @@ export function Scaffold({
           background: 'var(--color-background-stacking)',
           borderBottom: '1px solid var(--color-border-default)',
         }}
-      />
+      >
+        <StatusBar />
+      </div>
 
       {showTopNavSlot && topNavigation ? (
         <div

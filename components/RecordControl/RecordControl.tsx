@@ -1,4 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Mic, X, Check, Pause, Play } from 'lucide-react';
 
 import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
 
@@ -33,20 +35,50 @@ import { ButtonIcon } from '../ButtonIcon/ButtonIcon';
  *
  * The 11 amplitude bars are literal, unbound pixel heights in the real
  * Recording instance (only their width/radius are token-bound, not their
- * height) — a static snapshot of one real waveform-at-rest moment, not a
- * live meter. Reproduced as the exact literals Figma draws, same
- * treatment as every other unbound literal found this session (TopBar's
- * 390 width, TermPip's 24px resting default). Their fill,
- * accent/magenta/bold, is the same open colour question TermPip's own
- * docs already flagged (shared with progress's Done state) — reproduced
- * as-is, not resolved here.
+ * height) — Figma's own frame is a static snapshot of one real
+ * waveform-at-rest moment, so those 11 literals are reproduced here as
+ * each bar's resting/max height, same treatment as every other unbound
+ * literal found this session (TopBar's 390 width, TermPip's 24px resting
+ * default). Their fill, accent/magenta/bold, is the same open colour
+ * question TermPip's own docs already flagged (shared with progress's
+ * Done state) — reproduced as-is, not resolved here.
+ *
+ * **Live animation added 2026-09-17, on direct request.** Figma can only
+ * ever show that one static resting frame — it has no way to represent
+ * motion — so this is a code-only addition, not something "confirmed
+ * live" the way a new variant would be. While `live` (Recording), each
+ * bar's height oscillates from its own resting literal via a per-bar
+ * sine function (distinct phase/frequency so bars don't move in
+ * lockstep) plus light periodic jitter, applied as `transform: scaleY`
+ * with a short CSS transition for interpolation — transform-only, so
+ * it's compositor work, not layout/paint. This is a **simulated** wave,
+ * not a real audio analyser: this app never processes real audio
+ * (`docs/design-system.md`'s hard rule), so it can't actually react to
+ * the student's voice level, only look like it does. `amplitudeFrozen`
+ * (distinct from `dimmed`) lets a caller force the bars static without
+ * fading them — see the Transcribing note below.
  *
  * caption's default text differs by state in the real file (Idle: "Tap to
  * answer", Recording: "Listening") — modeled as one prop with a
  * state-appropriate default rather than two separate hardcoded strings,
  * since it's genuinely the same property in Figma.
+ *
+ * **`Paused` added 2026-09-16, on direct request, overriding
+ * `sprint-context.md`'s locked "No pause/resume into one take" decision**
+ * — no real Figma instance exists for it either (same undesigned-gap
+ * category as `Recording`'s own missing `Submitting`/`Disabled` states),
+ * so it's built from this component's own existing real patterns rather
+ * than invented from nothing: mirrors `Recording`'s layout exactly, adds
+ * a third control (`Pause`/`Resume`, a `ButtonIcon` Secondary/M, same
+ * treatment as `Discard`) between Discard and Submit, and dims the
+ * amplitude meter to read as frozen (`dimmed` — faded *and* static,
+ * distinct from Transcribing's `amplitudeFrozen`, static but full
+ * opacity, per `docs/SPEC.md`'s own "stay visible but freeze" line for
+ * that state). Added live to the real Figma component set too (node
+ * `13734:32389`), not just built in code — see docs/component-gaps.md
+ * for exactly what's confirmed vs. a judgment call.
  */
-export type RecordControlState = 'Idle' | 'Recording';
+export type RecordControlState = 'Idle' | 'Recording' | 'Paused';
 
 interface RecordControlBase extends Omit<HTMLAttributes<HTMLDivElement>, 'children'> {
   /** Escape-hatch slot, real on both variants. Empty by default — matches
@@ -57,6 +89,18 @@ interface RecordControlBase extends Omit<HTMLAttributes<HTMLDivElement>, 'childr
   onMicClick?: () => void;
   onDiscardClick?: () => void;
   onSubmitClick?: () => void;
+  /** Paused only — see the file-level comment on this state's addition. */
+  onPauseClick?: () => void;
+  onResumeClick?: () => void;
+  /** Recording only — forces the amplitude meter static without dimming
+   *  it, for a screen-level beat that reuses `Recording`'s layout but
+   *  shouldn't read as actively listening (e.g. Loop's Transcribing
+   *  beat). Distinct from `Paused`'s `dimmed` treatment, which fades as
+   *  well as freezes. On the shared base (like `onPauseClick`/
+   *  `onResumeClick` above) rather than only on `RecordControlRecordingProps`
+   *  so it destructures cleanly out of `rest` regardless of state — see
+   *  this file's own render function. */
+  amplitudeFrozen?: boolean;
 }
 
 export interface RecordControlIdleProps extends RecordControlBase {
@@ -69,11 +113,17 @@ export interface RecordControlRecordingProps extends RecordControlBase {
   caption?: string;
 }
 
-export type RecordControlProps = RecordControlIdleProps | RecordControlRecordingProps;
+export interface RecordControlPausedProps extends RecordControlBase {
+  state: 'Paused';
+  caption?: string;
+}
+
+export type RecordControlProps = RecordControlIdleProps | RecordControlRecordingProps | RecordControlPausedProps;
 
 const ROOT_GAP: Record<RecordControlState, string> = {
   Idle: 'var(--space-300)',
   Recording: 'var(--space-400)',
+  Paused: 'var(--space-400)',
 };
 
 const CAPTION_STYLE = {
@@ -100,43 +150,39 @@ const ACTION_LABEL_STYLE = {
 // unbound in Figma (see the file-level comment above).
 const AMPLITUDE_BAR_HEIGHTS = [10, 20, 34, 48, 30, 52, 26, 40, 16, 28, 12];
 
-function MicGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
-      <path
-        d="M6 11a6 6 0 0012 0M12 19v2"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+// `dimmed` (Paused only) reduces the bars' opacity to read as frozen — a
+// judgment call, not a real Figma property (see this file's Paused note).
+// `live` (Recording, unless `frozen`) animates each bar around its own
+// resting height via a per-bar sine wave (distinct phase/frequency so
+// bars don't move in lockstep) plus light jitter — simulated, not real
+// audio reactivity (see this file's live-animation note above). `frozen`
+// forces the bars static without dimming (Transcribing).
+function AmplitudeMeter({ dimmed, live, frozen }: { dimmed?: boolean; live?: boolean; frozen?: boolean }) {
+  const animating = Boolean(live) && !frozen;
+  const [scales, setScales] = useState<number[]>(() => AMPLITUDE_BAR_HEIGHTS.map(() => 1));
+  const startRef = useRef(0);
 
-function DiscardGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
-}
+  useEffect(() => {
+    // Not animating: nothing to subscribe to — the render below already
+    // falls back to a resting scaleY(1) per bar without needing state.
+    if (!animating) return;
+    startRef.current = Date.now();
+    const id = setInterval(() => {
+      const t = (Date.now() - startRef.current) / 1000;
+      setScales(
+        AMPLITUDE_BAR_HEIGHTS.map((_, index) => {
+          const phase = index * 0.7;
+          const frequency = 1.6 + (index % 4) * 0.35;
+          const wave = Math.sin(t * frequency + phase);
+          const jitter = Math.sin(t * 5.3 + index * 2.1) * 0.15;
+          const scale = 0.55 + 0.4 * wave + jitter;
+          return Math.min(1.15, Math.max(0.25, scale));
+        }),
+      );
+    }, 100);
+    return () => clearInterval(id);
+  }, [animating]);
 
-function SubmitGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <path
-        d="M5 13l4 4 10-10"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function AmplitudeMeter() {
   return (
     <div
       style={{
@@ -149,6 +195,9 @@ function AmplitudeMeter() {
         paddingBottom: 'var(--space-300)',
         borderRadius: 'var(--radius-full)',
         background: 'var(--color-background-stacking)',
+        // No governing opacity token in tokens/tokens.json — flagged in
+        // docs/component-gaps.md rather than inventing one for this alone.
+        opacity: dimmed ? 0.4 : 1,
       }}
     >
       {AMPLITUDE_BAR_HEIGHTS.map((height, index) => (
@@ -159,6 +208,9 @@ function AmplitudeMeter() {
             height: `${height}px`,
             borderRadius: 'var(--radius-full)',
             background: 'var(--color-accent-magenta-bold)',
+            transform: `scaleY(${animating ? scales[index] : 1})`,
+            transformOrigin: 'center',
+            transition: 'transform 120ms ease-out',
           }}
         />
       ))}
@@ -167,8 +219,20 @@ function AmplitudeMeter() {
 }
 
 export function RecordControl(props: RecordControlProps) {
-  const { state, escape, onMicClick, onDiscardClick, onSubmitClick, style, ...rest } = props;
-  const caption = props.caption ?? (state === 'Idle' ? 'Tap to answer' : 'Listening');
+  const {
+    state,
+    escape,
+    onMicClick,
+    onDiscardClick,
+    onSubmitClick,
+    onPauseClick,
+    onResumeClick,
+    amplitudeFrozen,
+    caption: captionProp,
+    style,
+    ...rest
+  } = props;
+  const caption = captionProp ?? (state === 'Idle' ? 'Tap to answer' : state === 'Paused' ? 'Paused' : 'Listening');
 
   return (
     <div
@@ -187,17 +251,29 @@ export function RecordControl(props: RecordControlProps) {
       {...rest}
     >
       {state === 'Idle' ? (
-        <ButtonIcon variant="Primary" size="L" aria-label="Start recording" icon={<MicGlyph />} onClick={onMicClick} />
+        <ButtonIcon variant="Primary" size="L" aria-label="Start recording" icon={<Mic style={{ width: '100%', height: '100%' }} />} onClick={onMicClick} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-400)' }}>
-          <AmplitudeMeter />
+          <AmplitudeMeter
+            dimmed={state === 'Paused'}
+            live={state === 'Recording'}
+            frozen={amplitudeFrozen}
+          />
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-600)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-150)' }}>
-              <ButtonIcon variant="Secondary" size="M" aria-label="Discard" icon={<DiscardGlyph />} onClick={onDiscardClick} />
+              <ButtonIcon variant="Secondary" size="M" aria-label="Discard" icon={<X style={{ width: '100%', height: '100%' }} />} onClick={onDiscardClick} />
               <p style={ACTION_LABEL_STYLE}>Discard</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-150)' }}>
-              <ButtonIcon variant="Primary" size="L" aria-label="Submit" icon={<SubmitGlyph />} onClick={onSubmitClick} />
+              {state === 'Paused' ? (
+                <ButtonIcon variant="Secondary" size="M" aria-label="Resume" icon={<Play style={{ width: '100%', height: '100%' }} />} onClick={onResumeClick} />
+              ) : (
+                <ButtonIcon variant="Secondary" size="M" aria-label="Pause" icon={<Pause style={{ width: '100%', height: '100%' }} />} onClick={onPauseClick} />
+              )}
+              <p style={ACTION_LABEL_STYLE}>{state === 'Paused' ? 'Resume' : 'Pause'}</p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-150)' }}>
+              <ButtonIcon variant="Primary" size="L" aria-label="Submit" icon={<Check style={{ width: '100%', height: '100%' }} />} onClick={onSubmitClick} />
               <p style={ACTION_LABEL_STYLE}>Submit</p>
             </div>
           </div>

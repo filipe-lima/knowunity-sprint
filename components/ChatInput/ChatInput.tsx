@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { Plus, X, Mic, Send } from 'lucide-react';
 
 import { Spinner } from '../shared/Spinner';
 
@@ -121,39 +122,6 @@ const IS_PLACEHOLDER: Record<ChatInputStatus, boolean> = {
   'Long input': false,
 };
 
-function PlusGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <path d="M12 4v16M4 12h16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CloseGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function MicGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" />
-      <path d="M6 11a6 6 0 0012 0M12 19v2" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function SendGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 // Stylized approximation of the real "Audio Input" 33-bar amplitude
 // visualization — see the file-level comment for why the exact bar
 // geometry wasn't reliably retrievable.
@@ -218,7 +186,7 @@ export function ChatInput({ status = 'Inactive', value, onLeadingClick, onTraili
       {...rest}
     >
       <LegacyIconButton size={56} variant="Neutral" onClick={onLeadingClick} ariaLabel={isRecording ? 'Cancel recording' : 'Add'}>
-        {isRecording ? <CloseGlyph /> : <PlusGlyph />}
+        {isRecording ? <X style={{ width: '100%', height: '100%' }} /> : <Plus style={{ width: '100%', height: '100%' }} />}
       </LegacyIconButton>
 
       <div
@@ -280,13 +248,13 @@ export function ChatInput({ status = 'Inactive', value, onLeadingClick, onTraili
 
         {!isRecording && !HAS_SEND_BUTTON[status] && status !== 'Loading' ? (
           <span style={{ width: '24px', height: '24px', flexShrink: 0, color: 'var(--color-background-inverse)' }} aria-hidden="true">
-            <MicGlyph />
+            <Mic style={{ width: '100%', height: '100%' }} />
           </span>
         ) : null}
 
         {HAS_SEND_BUTTON[status] ? (
           <LegacyIconButton size={40} variant="Primary" onClick={onTrailingClick} ariaLabel="Send">
-            <SendGlyph />
+            <Send style={{ width: '100%', height: '100%' }} />
           </LegacyIconButton>
         ) : null}
       </div>

@@ -1,12 +1,55 @@
 @import "tailwindcss";
 @import "../build/css/tokens.css";
 
+/* The real typeface, at the four weights tokens/tokens.json actually
+   uses (font.weight.regular/semibold/bold/heavy) — files copied from the
+   user's own local install (~/Library/Fonts). Every component already
+   names 'Greed Standard-TRIAL' first in its font-family fallback stack,
+   so registering it here is the only change needed anywhere — no
+   component or token references had to change. TRIAL font files; swap
+   for the licensed release build if this ships past prototype. */
+@font-face {
+  font-family: 'Greed Standard-TRIAL';
+  src: url('/fonts/greed-standard/GreedStandard-TRIAL-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Greed Standard-TRIAL';
+  src: url('/fonts/greed-standard/GreedStandard-TRIAL-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Greed Standard-TRIAL';
+  src: url('/fonts/greed-standard/GreedStandard-TRIAL-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Greed Standard-TRIAL';
+  src: url('/fonts/greed-standard/GreedStandard-TRIAL-Heavy.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Dark mode only, no toggle — docs/sprint-context.md: "Canvas: iPhone
    390px, dark mode only, no other breakpoints." The create-next-app
    light/dark media-query swap this replaced assumed a light default and
-   a user-chosen dark mode; this app has exactly one color mode. */
+   a user-chosen dark mode; this app has exactly one color mode.
+
+   body uses background/shell, not background/page — background/page is
+   the 390px device frame's own fill (Scaffold's root). They're
+   deliberately different colors: without a visible edge between "the
+   browser canvas" and "the phone frame," the frame has no visible
+   boundary and a screen with little content looks like it's the wrong
+   height, when it's actually a fixed, correct 844px underneath. */
 body {
-  background: var(--color-background-page);
+  background: var(--color-background-shell);
   color: var(--color-text-primary);
   font-family: var(--font-family-default);
 }

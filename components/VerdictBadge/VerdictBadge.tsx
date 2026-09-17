@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { CheckCircle2, Info, AlertCircle } from 'lucide-react';
 import { IconSlot } from '../IconSlot/IconSlot';
 
 /**
@@ -26,31 +27,16 @@ export interface VerdictBadgeProps extends HTMLAttributes<HTMLDivElement> {
   label: string;
 }
 
-function CheckCircle() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth={2} />
-      <path d="M8 12l3 3 5-6" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+function CheckCircleGlyph() {
+  return <CheckCircle2 style={{ width: '100%', height: '100%' }} />;
 }
 
-function InfoCircle() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth={2} />
-      <path d="M12 11v5M12 8v.01" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
+function InfoCircleGlyph() {
+  return <Info style={{ width: '100%', height: '100%' }} />;
 }
 
-function AlertCircle() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth={2} />
-      <path d="M12 8v5M12 16v.01" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
+function AlertCircleGlyph() {
+  return <AlertCircle style={{ width: '100%', height: '100%' }} />;
 }
 
 // variant -> fill/color/glyph, confirmed against the real component
@@ -60,24 +46,24 @@ const VARIANT_STYLE: Record<VerdictBadgeVariant, { background: string; color: st
   Success: {
     background: 'var(--color-feedback-success-subtle)',
     color: 'var(--color-feedback-success-on-subtle)',
-    Glyph: CheckCircle,
+    Glyph: CheckCircleGlyph,
   },
   Almost: {
     background: 'var(--color-accent-blue-subtle)',
     color: 'var(--color-accent-blue-on-subtle)',
-    Glyph: InfoCircle,
+    Glyph: InfoCircleGlyph,
   },
   Miss: {
     // Deliberately accent/coral, not feedback/error — design-system.md's
     // own "Don't": the student hasn't failed, error red says otherwise.
     background: 'var(--color-accent-coral-subtle)',
     color: 'var(--color-accent-coral-on-subtle)',
-    Glyph: AlertCircle,
+    Glyph: AlertCircleGlyph,
   },
   SaidBack: {
     background: 'var(--color-accent-brand-subtle)',
     color: 'var(--color-accent-brand-on-subtle)',
-    Glyph: CheckCircle,
+    Glyph: CheckCircleGlyph,
   },
   Flagged: {
     // Neutral, not a warning tint — same reasoning as Miss avoiding error.
@@ -85,7 +71,7 @@ const VARIANT_STYLE: Record<VerdictBadgeVariant, { background: string; color: st
     // confirmed directly: background/stacking + text/secondary.
     background: 'var(--color-background-stacking)',
     color: 'var(--color-text-secondary)',
-    Glyph: InfoCircle,
+    Glyph: InfoCircleGlyph,
   },
 };
 

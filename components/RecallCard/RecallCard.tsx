@@ -1,4 +1,5 @@
 import type { ElementType, HTMLAttributes, ReactNode } from 'react';
+import { GraduationCap } from 'lucide-react';
 import { IconSlot } from '../IconSlot/IconSlot';
 
 /**
@@ -40,20 +41,6 @@ export interface RecallCardProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode;
 }
 
-function GraduationCapGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" aria-hidden="true">
-      <path
-        d="M12 3l10 5-10 5-10-5 10-5z"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinejoin="round"
-      />
-      <path d="M6 11v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5" stroke="currentColor" strokeWidth={2} />
-    </svg>
-  );
-}
-
 export function RecallCard({
   provenance,
   instruction,
@@ -82,7 +69,7 @@ export function RecallCard({
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
         <IconSlot size="200" color="var(--color-text-primary)">
-          <GraduationCapGlyph />
+          <GraduationCap style={{ width: '100%', height: '100%' }} />
         </IconSlot>
         <span
           style={{

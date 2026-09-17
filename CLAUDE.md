@@ -38,6 +38,7 @@ When working on UI, use the storybook tools to read the component library before
 | `docs/voice-ux-reference.md` | Designing anything voice-related (permissions, states, generosity of judging). |
 | `docs/sprint-context.md` | Before designing any screen or flow — committed decisions + explicit non-goals. |
 | `docs/design-system.md` | Before building or styling any screen — component inventory, scaffold/slot rules, naming, the 15 "Never do this" rules. |
+| `docs/component-gaps.md` | Before building a new screen — a running list of things built inline (not yet real components) during earlier screen builds; check it before assuming something doesn't exist. |
 | `tokens/tokens.json` | Whenever `design-system.md` names a token — look up its real value here. |
 | `build/css/tokens.css` | Never edit this file — it's generated from `tokens/tokens.json`. Change the token there and run `npm run tokens` to regenerate it. |
 | `docs/reference/*.png` | Comparing your design against the already-shipped beta (numbered flow screenshots). |
