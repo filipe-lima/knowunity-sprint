@@ -164,7 +164,7 @@ export function Home() {
                 color: 'var(--color-accent-blue-on-subtle)',
               },
             ]}
-            avatar={<Avatar type="Initial" size="Large" shape="Circle" initials="H" aria-label="Your profile" />}
+            avatar={<Avatar type="Initial" size="Large" shape="Circle" initials="F" aria-label="Your profile" />}
           />
         </>
       }

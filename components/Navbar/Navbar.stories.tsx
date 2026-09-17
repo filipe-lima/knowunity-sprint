@@ -54,7 +54,7 @@ export const FiveTabs: Story = {
       },
     ],
     avatar: (
-      <Avatar type="Initial" size="Large" shape="Circle" initials="H" aria-label="Your profile" />
+      <Avatar type="Initial" size="Large" shape="Circle" initials="F" aria-label="Your profile" />
     ),
   },
 };
