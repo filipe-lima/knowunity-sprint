@@ -54,6 +54,7 @@
   --color-alpha-light-40: rgba(255, 255, 255, 0.4);
   --color-alpha-light-48: rgba(245, 243, 255, 0.4784);
   --color-alpha-light-52: rgba(255, 255, 255, 0.5); /** Same white as light-40, raised to the minimum alpha that clears 4.5:1 against both background/surface and background/page — see text.disabled. */
+  --color-alpha-light-54: rgba(245, 243, 255, 0.54); /** Same tint as light-48, raised to the minimum alpha that clears 4.5:1 against both background/surface and background/page — see text.tertiary. Kept as its own step (not light-52) so tertiary and disabled stay visually distinct from each other. */
   --color-alpha-light-6: rgba(255, 255, 255, 0.0588);
   --color-alpha-light-68: rgba(245, 243, 255, 0.6784);
   --color-homie-inkwell: #9178e6;
@@ -190,7 +191,7 @@
   --color-interactive-disabled: var(--color-alpha-light-6); /** Fill for a control that is visible but not currently actionable. */
   --color-text-primary: var(--color-violet-50); /** Default reading colour for headings and body copy. */
   --color-text-secondary: var(--color-alpha-light-68); /** Supporting copy that should sit one step below primary in emphasis. */
-  --color-text-tertiary: var(--color-alpha-light-48); /** Lowest-emphasis copy, for metadata, counters and timestamps. */
+  --color-text-tertiary: var(--color-alpha-light-54); /** Lowest-emphasis copy, for metadata, counters and timestamps. Raised from light-48 to light-54 to clear 4.5:1 contrast against background-surface — light-48 measured 4.34:1, caught by scripts/check-contrast.mjs. */
   --color-text-disabled: var(--color-alpha-light-52); /** Copy inside a control that is not currently actionable. Raised from light-40 to light-52 to clear 4.5:1 contrast against both real backgrounds — light-40 measured ~3.64:1/~3.78:1, see eval/scorecard-02.md. */
   --color-text-inverse: var(--color-navy-950); /** Copy placed on background/inverse or any other light surface. */
   --color-text-link-default: var(--color-violet-500); /** Inline link colour within running text. */
