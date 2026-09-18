@@ -6,13 +6,18 @@ real components yet. Read before building a new screen; if a gap listed
 here would also serve your screen, promote it to a real component instead
 of building a second inline copy (see the skill for that process).
 
-- **Summary's all-clear block** (mascot + a short title + a body line, no
-  actions) — `screens/Summary/Summary.tsx`. `KnowieMessage` was the
-  obvious candidate but its real shape is mascot + one message string + an
-  `Actions` slot that defaults to real buttons, built for a prompt with
-  actions, not a two-line informational block with none. Built inline from
-  `MascotSlot` + `MascotArt` + plain text. If a second screen needs this
-  same shape, build it as a real component instead of a second inline copy.
+- **Summary's all-clear block — resolved 2026-09-17.** Was mascot + a
+  short title + a fixed body line, hand-rolled from `MascotSlot` +
+  `MascotArt` + plain text because `KnowieMessage`'s real shape (mascot +
+  message + an `Actions` slot defaulting to real buttons) didn't fit a
+  no-actions block. Replaced with `SessionHero`'s own `Center`/`Card`
+  story (`components/SessionHero/SessionHero.tsx`), already built for
+  exactly this moment and already imported once elsewhere in the same
+  file — not a gap anymore. **Same day, on direct request:** the body
+  line is no longer fixed — it now reads from the session's own
+  `results` (plain all-clear if nothing was flagged/skipped this session,
+  otherwise names the count of each), so "a body line" above should now
+  be read as "up to 4 body-line variants," not one static string.
 - **Screen headers (back icon + centered title) — promoted 2026-09-17.**
   Was `screens/Hub/ScaffoldHeader.tsx`, shared by `RecallHub` and
   `RecallHistory` (both restored 2026-09-16); now
@@ -165,15 +170,28 @@ of building a second inline copy (see the skill for that process).
   attempt. Also why Reveal (a second miss escalating to a mandatory
   explanation) was removed entirely the same day, not just the bare-retry
   path into it — see the next entry.
-- **Say-it-back (Loop 10, a real confirmed Figma screen) currently has no
-  trigger anywhere in the app** — `screens/Loop/Loop.tsx`. Its only entry
-  point was Reveal, removed entirely 2026-09-16 on direct request since
-  Reveal itself was never part of the committed flow (no "Loop 9" exists
-  in the real 17-frame set) — see `docs/SPEC.md`'s and
-  `docs/sprint-context.md`'s matching updates. Not deleted, just
-  currently dead code with a real screen behind it; needs a real decision
-  on whether/how it gets a new trigger before it's genuinely unused
-  weight rather than a flagged gap.
+- **Say-it-back (Loop 10, a real confirmed Figma screen) had no trigger
+  anywhere in the app** — `screens/Loop/Loop.tsx`. Its only entry point
+  was Reveal, removed entirely 2026-09-16 on direct request since Reveal
+  itself was never part of the committed flow (no "Loop 9" exists in the
+  real 17-frame set). Carried here as dead code needing a real decision;
+  **resolved 2026-09-18** by deleting it outright instead of leaving it
+  open — `components/VerdictBadge/VerdictBadge.tsx`'s `SaidBack` variant
+  and `components/RecallBlock/RecallBlock.tsx`'s `Explanation` variant
+  (this screen's only real consumers) are gone too, along with their
+  Storybook stories and their rows in `docs/design-system.md`'s variant
+  tables. See `docs/SPEC.md`'s and `docs/sprint-context.md`'s matching
+  updates.
+- **A related, separate bug found the same day: Summary was showing an
+  outcome — "Revealed, then said back unaided" — that the app could no
+  longer produce at all**, since Reveal (above) was already gone.
+  `app/summary/page.tsx`'s hardcoded `PARTIAL_RESULTS` mock and
+  `screens/Hub/RecallHistory.tsx`'s matching "Said recently" row both had
+  this stale value for the term "Ecological validity"; both now use a
+  real, producible outcome ("Said it after a hint") instead. This is also
+  what surfaced the taxonomy cleanup above — closing it here since the
+  "Reveal" concept is now fully gone from the app, not just from Loop's
+  live state machine.
 - **`RecordControl`'s Pause/Resume control has no real icon asset, in
   code or in Figma** — `components/RecordControl/RecordControl.tsx`.
   Checked directly: no component named "pause" or "play" exists anywhere
@@ -235,6 +253,12 @@ of building a second inline copy (see the skill for that process).
   `text/secondary` (was defaulting to `text/primary` before — a real
   color fix, not just a shape one). Row titles and subtitles are both
   real 12px (`--font-size-xs`), not the 15px used before.
+  **"Skipped" reversed again 2026-09-17** — `Loader2` reads as a loading
+  spinner, not a skip glyph, and `accent/coral/bold` is Miss's own color
+  elsewhere on this same screen family; Summary's own `OUTCOME_STYLE`
+  already draws its "Skipped" outcome as `SkipForward` /
+  `text/secondary`, so this section was switched to match it — one
+  outcome, one icon/color pairing, not two.
 - **`components/StatusBar/StatusBar.tsx` — built, reversed, rebuilt, then
   deleted for good, 2026-09-17.** Not an inline-screen gap like the rest
   of this file, but the same "assumption written from how the prototype
@@ -255,3 +279,35 @@ of building a second inline copy (see the skill for that process).
   scaffold's own top rounded corner. Not a Figma content correction — the
   real Figma frames genuinely do show a status bar in their own static
   mockup context, which has no real device chrome to defer to.
+- **`components/TermPip/TermPip.tsx` — color-only states, flagged not
+  fixed, 2026-09-18.** `eval/scorecard-02.md`'s `critic-craft` pass (both
+  rounds) found `Done`/`Current`/`Upcoming` differentiated by `background`
+  fill alone (`TermPip.tsx:38-42`) — a real hit against
+  `design-system.md` rule 10 ("never use colour alone to carry meaning"),
+  live on Loop's progress row every session. Not fixed here: the
+  component's own doc comment says it's a real, Figma-confirmed primitive
+  with exactly one variant property and explicitly "no other properties
+  or slots exist... a single filled frame with no children — do not add
+  one." Adding a border/ring/icon inside the component itself would mean
+  inventing a variant beyond what's confirmed in Figma — the thing
+  `CLAUDE.md`'s hard rules forbid doing silently. A caller-side wrapper
+  (in `screens/Loop/Loop.tsx`'s progress row, which is itself documented
+  as "a plain auto-layout pattern... kept deliberately raw," not a locked
+  component) was considered as a way to add shape differentiation without
+  touching the real primitive, but wasn't built this pass either — left
+  as an open gap rather than a silent workaround, pending a real decision
+  on whether that's an acceptable place to layer it, or whether this
+  needs a real addition to the Figma `termPip` component set first.
+- **Figma out of sync with code, flagged not fixed, 2026-09-17.** This
+  session's changes (Loop's Success verdict now carries an `XpPill`;
+  Almost no longer shows "Missing: ..."; Hint revealed dropped its
+  penalty caption; Summary's all-clear body is now conditional) were not
+  pushed to the real Figma file — the Desktop Bridge connection reports
+  healthy on a status ping but every actual data call failed this
+  session (`figma_get_file_data`: REST 403 invalid token;
+  `figma_search_components`: internal plugin error), matching this
+  project's own documented history of this exact bridge dropping
+  mid-session (see Avatar's entry above, and Navbar's in SPEC.md). Needs
+  a real reconnect (a working REST token, or a confirmed-responsive
+  Desktop Bridge plugin) before `COMMITED FLOW FINAL WITHOUT COMPONENTS`
+  and the components page can be brought back in line with the code.

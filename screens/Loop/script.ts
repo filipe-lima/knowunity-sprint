@@ -195,7 +195,7 @@ const RESEARCH_METHODS_TERMS: TermScript[] = [
           {
             transcript: 'It is about real-world settings somehow.',
             verdict: 'almost',
-            had: 'It relates to real-world settings.',
+            had: 'You had: it relates to real-world settings.',
             missing: 'That it specifically means the findings generalize beyond the lab.',
           },
           {

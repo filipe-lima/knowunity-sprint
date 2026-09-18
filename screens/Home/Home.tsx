@@ -126,22 +126,43 @@ export function Home() {
       }
       bottomContent={
         <>
-          <div style={{ display: 'flex', gap: 'var(--space-200)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 'var(--space-200)', flexWrap: 'wrap', alignItems: 'center' }}>
             <Chips size="S" color="Primary" text="Scan" leadingIcon={<Search style={iconStyle} />} />
-            <div style={{ position: 'relative', display: 'inline-flex' }}>
+            {/* Chips is documented as "for filters, selectable options and
+                small counters... not for actions" and its S size is 32px —
+                under the 44pt touch-target minimum — but it's wired here as
+                the entry point into Recall. Rather than resize the chip
+                itself (which would break its visual match with the other
+                three), the real tap target is a real <button> padded out to
+                control-600 (48px) around it — the chip's look is unchanged,
+                only its hit area grows, same invisible-padding technique
+                ButtonIcon's own wrapper already uses for its circle. */}
+            <button
+              type="button"
+              onClick={() => router.push('/hub')}
+              aria-label="Recall"
+              style={{
+                position: 'relative',
+                display: 'inline-flex',
+                alignItems: 'center',
+                minHeight: 'var(--control-600)',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: 'pointer',
+              }}
+            >
               <Chips
                 size="S"
                 color="Primary"
                 text="Recall"
                 leadingIcon={<Brain style={iconStyle} />}
-                onClick={() => router.push('/hub')}
-                style={{ cursor: 'pointer' }}
               />
               <ChipMarker
                 variant="Dot"
                 style={{ position: 'absolute', top: '-2px', right: '-2px' }}
               />
-            </div>
+            </button>
             <Chips size="S" color="Primary" text="Quiz" leadingIcon={<FileQuestion style={iconStyle} />} />
             <Chips size="S" color="Primary" text="Upload" leadingIcon={<Plus style={iconStyle} />} />
           </div>

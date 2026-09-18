@@ -237,25 +237,28 @@ defect.
 
 ### `recallBlock`
 
-**States and options.** Four variants on one axis, `variant`: Transcript /
-Hint / Explanation / Confirm.
+**States and options.** Four variants exist in the real Figma component set,
+on one axis, `variant`: Transcript / Hint / Explanation / Confirm. Only three
+are implemented in code — Transcript / Hint / Confirm. `Explanation` (a
+re-explanation shown on a second miss, before a mandatory "say it back") was
+removed 2026-09-18 along with the "Reveal" flow it exclusively served; not
+built around, deliberately not reproduced now that it has nowhere to appear.
 
 **Other properties.** `label` TEXT, `body` TEXT. One slot, `Actions` — meant to
 hold the "That's not what I said" dispute control; left empty by default and
 collapses when unused.
 
-**What each state means.** Transcript, Explanation and Confirm all fill
-`background/stacking`; only Hint takes a colour, `accent/blue/subtle`, because
-a coloured Transcript would read as an early verdict during the judging wait
-(see the Don't). Confirm additionally swaps to a heavier label style
-(`Headline XXS Bold` on `text/primary`) and a lighter body
-(`Caption M Regular` on `text/secondary`) than the other three, since it's a
-decision prompt rather than a read-back. Padding, gap and radius are
-normalised to `Space/300` / `Space/200` / `Radius/400` across all four — the
-real `dispute confirm` reference instances in the file use a heavier
-`Space/400`/`Space/300` box; this was normalised deliberately rather than
-carried forward, per the plan's own instruction. Worth a second look if the
-heavier Confirm box was actually meant to stay.
+**What each state means.** Transcript and Confirm fill `background/stacking`;
+only Hint takes a colour, `accent/blue/subtle`, because a coloured Transcript
+would read as an early verdict during the judging wait (see the Don't).
+Confirm additionally swaps to a heavier label style (`Headline XXS Bold` on
+`text/primary`) and a lighter body (`Caption M Regular` on `text/secondary`)
+than the others, since it's a decision prompt rather than a read-back.
+Padding, gap and radius are normalised to `Space/300` / `Space/200` /
+`Radius/400` — the real `dispute confirm` reference instances in the file use
+a heavier `Space/400`/`Space/300` box; this was normalised deliberately
+rather than carried forward, per the plan's own instruction. Worth a second
+look if the heavier Confirm box was actually meant to stay.
 
 **When to reach for it.**
 
@@ -271,14 +274,18 @@ heavier Confirm box was actually meant to stay.
 
 ### `verdictBadge`
 
-**States and options.** Five variants on one axis, `variant`: Success / Almost
-/ Miss / SaidBack / Flagged.
+**States and options.** Five variants exist in the real Figma component set,
+on one axis, `variant`: Success / Almost / Miss / SaidBack / Flagged. Only
+four are implemented in code — `SaidBack` was removed 2026-09-18 along with
+the "Say it back" screen it exclusively served, once that screen's only
+trigger (the "Reveal" flow) was confirmed gone for good; deliberately not
+reproduced now that it has nowhere to appear.
 
-**Other properties.** `label` TEXT, one shared property across all five
-variants, defaulting to each variant's real copy (see table). No exposed icon
-swap — the glyph is baked into each variant at build time and cannot be
-changed independently, which is deliberate: this system's rule that colour is
-never the only carrier of meaning means word, glyph and colour have to move
+**Other properties.** `label` TEXT, one shared property across all variants,
+defaulting to each variant's real copy (see table). No exposed icon swap —
+the glyph is baked into each variant at build time and cannot be changed
+independently, which is deliberate: this system's rule that colour is never
+the only carrier of meaning means word, glyph and colour have to move
 together, and an overridable glyph would let someone break that pairing.
 
 **What each state means.**
@@ -288,7 +295,6 @@ together, and an overridable glyph would let someone break that pairing.
 | Success | `feedback/success/subtle` | check-circle | "Got it" |
 | Almost | `accent/blue/subtle` | info-circle | "Almost" |
 | Miss | `accent/coral/subtle` | alert-circle | "Not yet" |
-| SaidBack | `accent/brand/subtle` | check-circle | "Said it back" |
 | Flagged | `background/stacking` | info-circle | "Flagged for review" |
 
 **When to reach for it.**

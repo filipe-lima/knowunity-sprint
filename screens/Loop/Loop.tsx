@@ -12,16 +12,19 @@ import { RecallBlock } from '../../components/RecallBlock/RecallBlock';
 import { VerdictBadge } from '../../components/VerdictBadge/VerdictBadge';
 import { MascotSlot } from '../../components/MascotSlot/MascotSlot';
 import { MascotArt } from '../../components/shared/MascotArt';
+import { Spinner } from '../../components/shared/Spinner';
 import { TextBlock } from '../../components/TextBlock/TextBlock';
 import { ButtonIcon } from '../../components/ButtonIcon/ButtonIcon';
 import { Button } from '../../components/Button/Button';
+import { ButtonGroup } from '../../components/ButtonGroup/ButtonGroup';
 import { ChatInput } from '../../components/ChatInput/ChatInput';
 import { IconSlot } from '../../components/IconSlot/IconSlot';
 import { Sheet } from '../../components/Sheet/Sheet';
 import { TopBar } from '../../components/TopBar/TopBar';
 import { TermPip } from '../../components/TermPip/TermPip';
+import { XpPill } from '../../components/XpPill/XpPill';
 import { TOPIC_TERMS, TOPIC_LABELS, isTopicSlug, type TopicSlug, type Verdict } from './script';
-import type { SummaryResultRow } from '../Summary/Summary';
+import { OUTCOME_SCORE, type SummaryResultRow } from '../Summary/Summary';
 
 /**
  * Loop — screen 4 from docs/SPEC.md. One screen, one RecallCard, a single
@@ -55,9 +58,17 @@ export interface LoopProps {
    *  `/loop` link that doesn't specify one (e.g. the Cannot-speak
    *  sheet's own "Yes, let me type" from Hub). */
   topic?: string;
+  /** Real fix for the finding that "Yes, let me type" only actually
+   *  entered text mode when tapped from Loop's own internal sheet — every
+   *  other door (Hub, Recall history, the standalone Cannot-speak route)
+   *  routed here with no way to start in text mode, silently dropping a
+   *  student who explicitly said they couldn't speak in front of a live
+   *  mic. `app/loop/page.tsx` reads this from the `mode` query param
+   *  every non-Loop-internal "Yes, let me type" button now sets. */
+  initialTextMode?: boolean;
 }
 
-export function Loop({ topic }: LoopProps) {
+export function Loop({ topic, initialTextMode }: LoopProps) {
   const router = useRouter();
   const topicSlug: TopicSlug = isTopicSlug(topic) ? topic : 'research-methods';
   const terms = TOPIC_TERMS[topicSlug];
@@ -68,18 +79,12 @@ export function Loop({ topic }: LoopProps) {
   const [attemptIndex, setAttemptIndex] = useState(0);
   const [loopState, setLoopState] = useState<LoopState>('idle');
   const [disputeOrigin, setDisputeOrigin] = useState<'almost' | 'miss' | null>(null);
-  const [textMode, setTextMode] = useState(false);
+  const [textMode, setTextMode] = useState(Boolean(initialTextMode));
   const [chatLoading, setChatLoading] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [micPermissionAsked, setMicPermissionAsked] = useState(false);
   const [results, setResults] = useState<SummaryResultRow[]>([]);
   const [verdictKind, setVerdictKind] = useState<Verdict | 'flagged' | null>(null);
-  // Tracks whether Hint was actually shown before a retry, since a retry is
-  // now reachable both from Hint revealed and directly from the first
-  // verdict (the real Figma flow puts a bare "Try again" next to "Hint" on
-  // both Miss and Almost) — outcomeRow() below needs this to avoid
-  // mislabeling a hint-less retry as "Said it after a hint".
-  const [hintShown, setHintShown] = useState(false);
   // New 2026-09-16, on direct request: Wait no longer shows "Checking"
   // and the correction control at once (the real Figma frame did, node
   // 13759:45381 — a real behavior being deliberately changed here, not a
@@ -105,13 +110,12 @@ export function Loop({ topic }: LoopProps) {
   function goToNextTerm() {
     if (termIndex + 1 >= terms.length) {
       const allClear = ![...results].some((r) => r.flagged);
-      router.push(allClear ? '/summary?allClear=1' : '/summary');
+      router.push(`/summary?topic=${topicSlug}${allClear ? '&allClear=1' : ''}`);
       return;
     }
     setTermIndex((i) => i + 1);
     setVariantIndex(0);
     setAttemptIndex(0);
-    setHintShown(false);
     setLoopState('idle');
   }
 
@@ -214,24 +218,22 @@ export function Loop({ topic }: LoopProps) {
     setLoopState('idle');
   }
 
-  function outcomeRow(verdict: Verdict | 'flagged' | 'skipped'): SummaryResultRow {
+  // Shared by outcomeRow() below and the verdict-success render branch,
+  // so the two never disagree on which outcome a given attempt earned.
+  // Only 4 outcomes are ever recorded: any retry — hinted or not — scores
+  // and reads identically to a hinted pass, per direct decision closing
+  // SPEC.md's former "bare-retry scoring tier" open item.
+  function successOutcomeLabel(): string {
+    return attemptIndex > 0 ? 'Said it after a hint' : 'Said it unaided';
+  }
+
+  function outcomeRow(verdict: 'success' | 'flagged' | 'skipped'): SummaryResultRow {
     const outcomeLabel =
-      verdict === 'success'
-        ? attemptIndex > 0
-          ? hintShown
-            ? 'Said it after a hint'
-            : 'Said it after a retry'
-          : 'Said it unaided'
-        : verdict === 'flagged'
-          ? 'Flagged for review'
-          : verdict === 'skipped'
-            ? 'Skipped'
-            : 'Almost there';
+      verdict === 'success' ? successOutcomeLabel() : verdict === 'flagged' ? 'Flagged for review' : 'Skipped';
     return { term: term.term, outcome: outcomeLabel, flagged: verdict === 'flagged' || verdict === 'skipped' };
   }
 
   function handleHint() {
-    setHintShown(true);
     setLoopState('hintRevealed');
   }
 
@@ -477,9 +479,13 @@ export function Loop({ topic }: LoopProps) {
                 renderCorrectionControl()
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-100)' }}>
-                  <IconSlot size="200">
-                    <Mic style={{ width: '100%', height: '100%' }} />
-                  </IconSlot>
+                  {/* Static icon+word read as a dead state, not "an answer
+                      is coming" (voice-ux-reference.md Principle 6) —
+                      confirmed by rendering this beat, no motion at all for
+                      ~700ms. Reuses the same Spinner Button/ButtonIcon's own
+                      Loading state already uses, rather than inventing a
+                      new animation. */}
+                  <Spinner size="var(--icon-200)" color="var(--color-text-secondary)" />
                   <span
                     style={{
                       fontFamily: 'var(--font-family-default)',
@@ -498,11 +504,21 @@ export function Loop({ topic }: LoopProps) {
       case 'verdict': {
         const verdict = verdictKind ?? attempt.verdict;
         if (verdict === 'success') {
+          // On direct request: the moment a correct answer resolves is
+          // when the student should see what it earned, not just later on
+          // Summary. XpPill's own doc comment already documents size="S"
+          // as "the in-card pill beside a verdict... only where points
+          // were awarded" — not applied to Almost/Miss/Flagged, which
+          // score 0.
+          const successLabel = successOutcomeLabel();
           return {
             mascot: null,
             card: (
               <>
-                <VerdictBadge variant="Success" label={VERDICT_LABEL.success} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
+                  <VerdictBadge variant="Success" label={VERDICT_LABEL.success} />
+                  <XpPill size="S" label={`+${OUTCOME_SCORE[successLabel]} XP`} />
+                </div>
                 <RecallBlock variant="Transcript" label="You said" body={attempt.transcript}>
                   {renderCorrectionControl()}
                 </RecallBlock>
@@ -534,15 +550,15 @@ export function Loop({ topic }: LoopProps) {
           card: (
             <>
               <VerdictBadge variant={isMiss ? 'Miss' : 'Almost'} label={VERDICT_LABEL[verdict]} />
+              {/* Only what the student said, never what's missing — on
+                  direct request, reversed from this project's earlier
+                  written decision. Naming the gap is functionally handing
+                  over the recall answer, against design-brief.md's "judge
+                  generously" and voice-ux-reference.md Principle 4. */}
               {isMiss ? null : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-100)' }}>
-                  <p style={{ margin: 0, fontFamily: 'var(--font-family-default)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-primary)' }}>
-                    {attempt.had}
-                  </p>
-                  <p style={{ margin: 0, fontFamily: 'var(--font-family-default)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
-                    {attempt.missing}
-                  </p>
-                </div>
+                <p style={{ margin: 0, fontFamily: 'var(--font-family-default)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-primary)' }}>
+                  {attempt.had}
+                </p>
               )}
               <RecallBlock variant="Transcript" label="You said" body={attempt.transcript}>
                 {renderCorrectionControl()}
@@ -564,11 +580,19 @@ export function Loop({ topic }: LoopProps) {
           // "Re-explain" action entirely — the committed flow has no
           // dedicated re-explain trigger; Reveal is reached only via a
           // second miss (resolveAttempt below).
+          // Routed through the real ButtonGroup (Vertical/L) rather than a
+          // bare fragment — a hand-assembled pair here inherited Scaffold's
+          // bottomContent gap (4px) instead of Vertical/L's real 8px,
+          // silently diverging from Summary's identical primary-over-
+          // secondary shape. design-system.md: "Do not assemble a group by
+          // hand out of loose buttons."
           bottom: (
-            <>
-              <Button variant="Primary" size="L" cta="Try again" onClick={handleTryAgain} />
-              <Button variant="Secondary" size="L" cta="Hint" onClick={handleHint} />
-            </>
+            <ButtonGroup
+              variant="Vertical"
+              size="L"
+              primary={<Button variant="Primary" size="L" cta="Try again" fill onClick={handleTryAgain} />}
+              secondary={<Button variant="Secondary" size="L" cta="Hint" fill onClick={handleHint} />}
+            />
           ),
         };
       }
@@ -579,9 +603,6 @@ export function Loop({ topic }: LoopProps) {
             <>
               <VerdictBadge variant="Miss" label={VERDICT_LABEL.miss} />
               <RecallBlock variant="Hint" label="Hint" body={variant.hintBody ?? ''} />
-              <p style={{ fontFamily: 'var(--font-family-default)', fontSize: 'var(--font-size-xs)', color: 'var(--color-text-secondary)' }}>
-                One attempt, and it scores below an unaided answer.
-              </p>
             </>
           ),
           bottom: <Button variant="Primary" size="L" cta="Try again" onClick={handleTryAgain} />,
@@ -592,22 +613,31 @@ export function Loop({ topic }: LoopProps) {
           card: (
             <>
               <VerdictBadge variant={disputeOrigin === 'miss' ? 'Miss' : 'Almost'} label={disputeOrigin === 'miss' ? VERDICT_LABEL.miss : VERDICT_LABEL.almost} />
-              <p style={{ fontFamily: 'var(--font-family-default)', fontWeight: 'var(--font-weight-bold)', color: 'var(--color-text-primary)' }}>
-                You&apos;re saying your answer was right?
-              </p>
               {/* Real Figma copy ends "...and you get one of these per
                   session" — the cap you explicitly removed in the
-                  interview. Dropped, not reproduced. */}
-              <p style={{ fontFamily: 'var(--font-family-default)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
-                We will look at it to improve the judging. It stays out of your practice list. No points either way.
-              </p>
+                  interview. Dropped, not reproduced.
+                  RecallBlock's own Confirm variant already encodes this
+                  exact heavier-label/lighter-body pairing — built from
+                  "the real dispute confirm reference instances," i.e.
+                  this exact moment (see RecallBlock's doc comment) —
+                  reused here instead of the hand-rolled <p> pair this
+                  used to be. */}
+              <RecallBlock
+                variant="Confirm"
+                label="You're saying your answer was right?"
+                body="We will look at it to improve the judging. It stays out of your practice list. No points either way."
+              />
             </>
           ),
+          // Same ButtonGroup fix as Miss/Almost above, for the identical
+          // reason — a hand-assembled pair inherits the wrong gap.
           bottom: (
-            <>
-              <Button variant="Primary" size="M" cta="Yes, flag it" onClick={handleDisputeConfirmYes} />
-              <Button variant="Tertiary" size="M" cta="Never mind" onClick={handleDisputeConfirmNo} />
-            </>
+            <ButtonGroup
+              variant="Vertical"
+              size="M"
+              primary={<Button variant="Primary" size="M" cta="Yes, flag it" fill onClick={handleDisputeConfirmYes} />}
+              secondary={<Button variant="Tertiary" size="M" cta="Never mind" fill onClick={handleDisputeConfirmNo} />}
+            />
           ),
         };
       default:

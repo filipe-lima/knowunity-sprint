@@ -16,7 +16,6 @@ const DESCRIPTION = `
 | Success | feedback/success/subtle | check-circle | "Got it" |
 | Almost | accent/blue/subtle | info-circle | "Almost" |
 | Miss | accent/coral/subtle | alert-circle | "Not yet" |
-| SaidBack | accent/brand/subtle | check-circle | "Said it back" |
 | Flagged | background/stacking | info-circle | "Flagged for review" |
 
 **When to reach for it.** Once per term, at the top of the card's content, the moment a verdict lands.
@@ -24,6 +23,8 @@ const DESCRIPTION = `
 **Don't.** Don't move Miss onto feedback/error. It sits on accent/coral deliberately: the student has not failed, they have not got there yet, and error red says the opposite. Same reason Flagged is neutral rather than a warning.
 
 There is no Skipped variant yet, though the summary screen counts skipped terms — flagged as a gap, not built around.
+
+The real Figma component set has a 5th variant, \`SaidBack\` — removed here 2026-09-18 along with the "Say it back" screen it exclusively served, once that screen's only trigger (the "Reveal" flow) was confirmed gone for good.
 `.trim();
 
 const meta = {
@@ -41,7 +42,7 @@ const meta = {
   argTypes: {
     variant: {
       control: 'radio',
-      options: ['Success', 'Almost', 'Miss', 'SaidBack', 'Flagged'],
+      options: ['Success', 'Almost', 'Miss', 'Flagged'],
     },
   },
 } satisfies Meta<typeof VerdictBadge>;
@@ -62,10 +63,6 @@ export const Almost: Story = {
 
 export const Miss: Story = {
   args: { variant: 'Miss', label: 'Not yet' },
-};
-
-export const SaidBack: Story = {
-  args: { variant: 'SaidBack', label: 'Said it back' },
 };
 
 export const Flagged: Story = {

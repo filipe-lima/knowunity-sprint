@@ -53,7 +53,7 @@ export function CannotSpeakSheet() {
                 variant="Primary"
                 size="L"
                 cta="Yes, let me type"
-                onClick={() => router.push('/loop')}
+                onClick={() => router.push('/loop?mode=text')}
               />
               <Button
                 variant="Tertiary"

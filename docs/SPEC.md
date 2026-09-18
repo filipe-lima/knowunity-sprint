@@ -76,12 +76,20 @@ below in the old "Flagged" note this replaces).
 
 `sessionHero`(align=Left, surface=None, **trailing = `xpPill`**) — real,
 confirmed: `Left, None` story already has a `trailing` slot built for
-exactly this. One row per resolved outcome (3–5, never a fixed 5), each a
-bespoke `bucket / NEW` frame (not a real `listRow` instance — see
-`docs/component-gaps.md`) with a leading status `iconSlot`, title/subtitle
-text, and a trailing XP number. `mascotSlot`(XL, crop=Full) for the
-all-clear block. `topBar`(Centered, "Results") — missing from every
-earlier build of this screen.
+exactly this. **Reversed 2026-09-18, on direct request, superseding this
+line's own earlier "one row per resolved outcome (3–5, never a fixed 5)"
+rule:** rows are grouped by outcome instead of by term — at most 4 rows
+(one per outcome that actually occurred this session: unaided/hint/
+flagged/skipped), each a bespoke `bucket / NEW` frame (not a real
+`listRow` instance — see `docs/component-gaps.md`) with a leading status
+`iconSlot`, an outcome title, a bare count subtitle ("2 terms," never a
+term name), and that bucket's summed XP as the trailing number. Both real
+Figma instances (`Summary 2`/`Summary 3`) still show one row per term —
+a deliberate departure, pushed back into `COMMITED FLOW FINAL WITHOUT
+COMPONENTS` too, same category as the button-order override below, not
+left unreconciled. `mascotSlot`(XL, crop=Full) for the all-clear block.
+`topBar`(Centered, "Results") — missing from every earlier build of this
+screen.
 
 **Files:** `components/SessionHero/SessionHero.tsx`,
 `components/XpPill/XpPill.tsx`, `components/TopBar/TopBar.tsx`,
@@ -90,16 +98,18 @@ earlier build of this screen.
 own inline `ResultRow`.
 
 **Row icon/color, confirmed by resolving each real bound Figma
-variable:** "Said it unaided" and "Revealed, then said back unaided"
-share the identical check-circle icon on `feedback/success/bold`; "Said
-it after a hint" (and the Loop CTA fix's new "Said it after a retry" —
-grouped here the same way, an open scoring gap, see Open below) uses a
-plain check on `accent/blue/bold`; "Flagged for review" and "Skipped"
-both use `text/secondary` (info-circle / skip-forward respectively).
+variable:** "Said it unaided" uses a check-circle icon on
+`feedback/success/bold`; "Said it after a hint" uses a plain check on
+`accent/blue/bold`; "Flagged for review" and "Skipped" both use
+`text/secondary` (info-circle / skip-forward respectively). **Resolved
+2026-09-18** (closing Open item #10, below): a hint-less retry scores and
+reads identically to a hinted pass — "Said it after a retry" was never a
+real fifth tier, just this same "Said it after a hint" bucket.
 
 **States.**
 - **Regular summary** — `SessionHero` headline + total-XP pill, one row
-  per resolved outcome, `ButtonGroup` (Vertical, **L**) with "Back to
+  per outcome that occurred (grouped, not per term — see above),
+  `ButtonGroup` (Vertical, **L**) with "Back to
   Recall" (Primary) and "Keep going, N terms left" (Secondary).
   **Updated 2026-09-17, on direct request, overriding the real committed
   Figma frame** (`Summary 3`, node `13759:45754`, which has these the
@@ -111,7 +121,13 @@ both use `text/secondary` (info-circle / skip-forward respectively).
   in the whole flow (standby → approving; no visible transition on
   arrival, per the interview). Bottom action is **one** `Button`
   (Primary/L, "Back to Recall") — no `ButtonGroup`, no secondary at all;
-  the real instance has exactly one button.
+  the real instance has exactly one button. **Updated 2026-09-17, on
+  direct request:** the closing body line is no longer one fixed
+  sentence — it now reacts to whether the session's own results contain
+  any "Flagged for review" or "Skipped" rows (plain all-clear if neither;
+  otherwise names the count of each), and the line "The dot on Recall is
+  off until you study something new" was dropped outright, in every
+  branch.
 
 **What the student can do.** All-clear: tap **Back to Recall** →
 returns Home/Hub, chip returns to plain (the all-clear state is what
@@ -363,9 +379,8 @@ frame — see `docs/component-gaps.md`.
 
 ### Verdicts
 **Confirmed, one screen per verdict, same shape:** `RecallCard`,
-`VerdictBadge` (`Success` / `Almost` / `Miss` / `Flagged` stories —
-`SaidBack` is used at the Say-it-back moment, not here), `RecallBlock`
-(`Transcript` story).
+`VerdictBadge` (`Success` / `Almost` / `Miss` / `Flagged` stories),
+`RecallBlock` (`Transcript` story).
 
 - **Success (unaided pass)** — `VerdictBadge` `Success`. **Updated
   2026-09-16, on direct request, superseding this same day's earlier
@@ -375,8 +390,22 @@ frame — see `docs/component-gaps.md`.
   only way to move on. Added live to the real Figma frame too (node
   `13759:45412`, Loop 5); the "Next term in a moment" caption that
   implied a timer is gone from both the app and the Figma frame.
-- **Almost there** — `VerdictBadge` `Almost`. Per `sprint-context.md`,
-  copy must state what was there and what was missing in one line.
+  **Updated 2026-09-17, on direct request:** also carries an `XpPill`
+  (size S) beside the badge, showing what this term just earned (real
+  component, `components/XpPill/XpPill.tsx` — its own doc comment already
+  names this exact placement, "the in-card pill beside a verdict... only
+  where points were awarded"). Score is read from
+  `screens/Summary/Summary.tsx`'s exported `OUTCOME_SCORE`, the same
+  table Summary's own total is built from. **Not yet added live to the
+  real Figma frame** — flagged in `docs/component-gaps.md`, pending the
+  Figma connection being reachable again.
+- **Almost there** — `VerdictBadge` `Almost`. **Reversed 2026-09-17, on
+  direct request, superseding this doc's own earlier line** ("copy must
+  state what was there and what was missing in one line," per
+  `sprint-context.md`): the card now states only what the student said
+  was there ("You had: ..."), never what's missing — see
+  `sprint-context.md`'s matching decision for the full rationale (naming
+  the gap hands over the recall answer).
   **Actions confirmed live against the committed Figma flow** (node
   `13759:45508`, Loop 8, 2026-09-16 — supersedes this doc's older "hint or
   skip only, no re-explain" line and `sprint-context.md`'s matching
@@ -443,18 +472,16 @@ Wait frame's correction control (§ Wait, above) already covers "that's
 not what I heard" before a verdict fires; nothing else needed Reveal to
 exist.
 
-### Say it back — real screen, currently unreachable
-**Confirmed:** `RecallCard`, `ButtonIcon` (Primary/L) — notably *not* the
-full `RecordControl`, just a bare record trigger. A real, confirmed
-screen (Loop 10) — **not deleted**, but its only trigger (Reveal, above)
-was, so there is currently no code path into it. Flagged in
-`docs/sprint-context.md` and `docs/component-gaps.md` as unused pending a
-real decision on whether/how it gets a new trigger, not silently dropped.
-
-**What the student can do, if reached.** Record anything. Per the
-interview, this is **unconditional** — any recording resolves straight to
-the flat +5 credit (`sprint-context.md`'s scoring), no separate pass/fail
-beat, no acknowledgment screen.
+### Say it back — removed entirely 2026-09-18, on direct request
+Was a real, confirmed screen (Loop 10 — `RecallCard`, `ButtonIcon`
+Primary/L, notably *not* the full `RecordControl`, just a bare record
+trigger), left in place but unreachable since Reveal (its only trigger)
+was removed above. Carried as an open item in `docs/sprint-context.md`
+and `docs/component-gaps.md` for a while, pending a real decision on
+whether it ever got a new trigger — resolved now by removing it outright
+instead: `VerdictBadge`'s `SaidBack` variant and `RecallBlock`'s
+`Explanation` variant (this screen's only real consumers) are deleted
+too, closing the open item rather than leaving it open indefinitely.
 
 ### Dispute confirm
 **Confirmed:** `RecallCard`, `VerdictBadge` `Almost`, `Button`(Primary/M),
@@ -554,6 +581,18 @@ Navbar.tsx` and `components/Avatar/Avatar.tsx` (see their own doc
 comments for what's confirmed vs. flagged — the Desktop Bridge connection
 dropped mid-session before every detail, especially Avatar's per-size
 pixel dimensions, could be fully confirmed).
+
+**Touch target, 2026-09-17:** the Recall chip is the entry point into
+this whole feature but `chips`' own `S` size (32px) sits under the 44pt
+touch-target minimum, and `chips` is documented elsewhere as "not for
+actions." Rather than resize the chip (breaking its visual match with
+the other three) or drop the "not for actions" rule, the real tap target
+is a real `<button>` padded to `control-600` (48px) around the
+unchanged-looking chip — same invisible-padding technique `ButtonIcon`'s
+own wrapper already uses. That taller wrapper initially broke the row's
+vertical alignment against its bare 32px siblings (the row had no
+`alignItems`, defaulting to `stretch`); fixed same day with
+`alignItems: 'center'` on the row.
 
 **Flagged, not resolved here:** the real Recall chip's own Figma layer
 name is literally `chip / Recall / NEW (brain glyph pending library)` —
@@ -714,14 +753,15 @@ working assumption noted, but don't treat any of these as settled:
    `sprint-context.md`'s dispute decision — no longer capped at 1 per
    session, matching the code (which never tracked a count) and the real
    committed Figma flow.
-10. **Bare-retry scoring tier.** 2026-09-16: Miss and Almost's real
-    committed-flow actions (Try again / Hint, confirmed against
-    `13759:45445` / `13759:45508`) make a hint-less retry pass possible,
-    but `sprint-context.md`'s scoring table has no tier for it. Built
-    (`screens/Loop/Loop.tsx`'s `outcomeRow`) as its own distinct outcome
-    label ("Said it after a retry"), grouped into Summary's "hinted"
-    bucket as the closest of the five named ones — not a confirmed score
-    or bucket assignment.
+10. ~~**Bare-retry scoring tier.**~~ **Resolved 2026-09-18:** Miss and
+    Almost's real committed-flow actions (Try again / Hint, confirmed
+    against `13759:45445` / `13759:45508`) make a hint-less retry pass
+    possible, but `sprint-context.md`'s scoring table had no tier for it.
+    Direct decision: a hint-less retry scores and reads exactly like a
+    hinted pass — "Said it after a hint," 8 XP — not a separate tier.
+    `screens/Loop/Loop.tsx`'s `outcomeRow`/`successOutcomeLabel` and
+    `screens/Summary/Summary.tsx`'s `OUTCOME_SCORE`/`OUTCOME_STYLE`
+    updated to match; the old "Said it after a retry" label is gone.
 11. **`/cannot-speak`'s standalone route is now orphaned.** Its own doc
     comment (`screens/CannotSpeak/CannotSpeakSheet.tsx`) says plainly:
     "once Hub is built, this stops being a standalone route and becomes a

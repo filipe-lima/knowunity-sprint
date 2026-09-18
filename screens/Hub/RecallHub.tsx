@@ -12,7 +12,7 @@ import { ButtonGroup } from '../../components/ButtonGroup/ButtonGroup';
 import { Button } from '../../components/Button/Button';
 import { Sheet } from '../../components/Sheet/Sheet';
 import { ScaffoldHeader } from '../../components/ScaffoldHeader/ScaffoldHeader';
-import { TOPIC_LABELS, type TopicSlug } from '../Loop/script';
+import { TOPIC_LABELS, TOPIC_TERMS, type TopicSlug } from '../Loop/script';
 
 /**
  * Recall Hub — reverted 2026-09-16 back to this project's very first real
@@ -58,7 +58,11 @@ const TOPIC_ROWS: { slug: TopicSlug; icon: ReactNode; subtitle: string; badge: s
     slug: 'research-methods',
     icon: <Brain style={{ width: '100%', height: '100%' }} />,
     subtitle: '5 terms. About 3 minutes. Read Tuesday.',
-    badge: 'Up next',
+    // Neutral fallback, matching the other three topics' own count-based
+    // badge — was 'Up next' before, which duplicated the active-selection
+    // label the moment a different topic got selected (RecallHub.tsx's own
+    // `text={isSelected ? 'Up next' : row.badge}` below).
+    badge: '0 of 5',
   },
   {
     slug: 'cell-biology',
@@ -76,7 +80,11 @@ const TOPIC_ROWS: { slug: TopicSlug; icon: ReactNode; subtitle: string; badge: s
     slug: 'terms-you-missed',
     icon: '🔁',
     subtitle: 'From your last two sessions',
-    badge: '3 terms',
+    // Was a hand-typed '3 terms' — disagreed with Recall history's own
+    // hand-typed 'Say the 6 that are due' CTA, and with the real 5-term
+    // script both actually route to. Derived from the same data both
+    // screens already play against, so the two labels can't drift again.
+    badge: `${TOPIC_TERMS['terms-you-missed'].length} terms`,
   },
 ];
 
@@ -103,17 +111,23 @@ function HubRow({
   title,
   titleColor = 'var(--color-text-primary)',
   subtitle,
+  subtitleColor = 'var(--color-text-secondary)',
   trailing,
   onActivate,
 }: {
   icon: ReactNode;
   title: string;
-  /** Confirmed live against the real locked row (Hub C, node
-   *  13759:45277): its title alone is bound to text/disabled, everything
-   *  else on the row (subtitle, "Read the lesson" button + icon) stays at
-   *  its normal color. Not an opacity/overlay treatment on the row. */
+  /** Originally bound the locked row's title alone to text/disabled,
+   *  matching design-system.md's ListRow account at the time. That
+   *  pairing (text/disabled title on background/surface) was later
+   *  axe-core-measured at 3.69:1 — under the 4.5:1 AA minimum — and
+   *  design-system.md's own ListRow rule was reversed as a result: title
+   *  now stays on text/secondary, and the dimming moves to the subtitle
+   *  instead (see subtitleColor below). This row was never updated to
+   *  match that reversal; it is now. */
   titleColor?: string;
   subtitle: string;
+  subtitleColor?: string;
   trailing?: ReactNode;
   onActivate?: () => void;
 }) {
@@ -157,7 +171,7 @@ function HubRow({
             fontSize: 'var(--font-size-xs)',
             lineHeight: 'var(--font-line-height-xs)',
             letterSpacing: 'var(--font-tracking-loose)',
-            color: 'var(--color-text-secondary)',
+            color: subtitleColor,
           }}
         >
           {subtitle}
@@ -218,9 +232,18 @@ export function RecallHub() {
           <HubRow
             icon={<GraduationCap style={iconStyle} />}
             title="Statistics, section 3"
-            titleColor="var(--color-text-disabled)"
+            titleColor="var(--color-text-secondary)"
             subtitle="Ready to rehearse once you finish the lesson"
-            trailing={<Button variant="Tertiary" size="S" cta="Read the lesson" />}
+            subtitleColor="var(--color-text-disabled)"
+            trailing={
+              // No real destination in this sprint's scope (SPEC.md) — that
+              // call is already made. What wasn't applied is the visual:
+              // a real Tertiary Button with no onClick looked exactly like
+              // a live control that silently does nothing on tap. Its own
+              // real Disabled state (already used for Loop's Skip button)
+              // makes that look match the fact.
+              <Button variant="Tertiary" size="S" cta="Read the lesson" state="Disabled" />
+            }
           />
 
           <HubRow
@@ -280,7 +303,7 @@ export function RecallHub() {
                   variant="Primary"
                   size="L"
                   cta="Yes, let me type"
-                  onClick={() => router.push('/loop')}
+                  onClick={() => router.push(`/loop?topic=${selected}&mode=text`)}
                 />
                 <Button
                   variant="Tertiary"

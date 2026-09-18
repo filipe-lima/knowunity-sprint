@@ -60,6 +60,12 @@ function NavigationButton({ icon, state = 'Inactive', label, hasLabel = false, c
         alignItems: 'center',
         justifyContent: 'center',
         flex: '1 1 0',
+        // Real Figma content (an icon, no label on every current usage)
+        // sits well under the 44pt touch-target minimum on its own — the
+        // wrapper button's hit area is padded out to control-600 (48px)
+        // rather than sized to its content, same fix ButtonIcon already
+        // applies to its own wrapper.
+        minHeight: 'var(--control-600)',
         gap: 'var(--space-050)',
         background: 'none',
         border: 'none',

@@ -207,7 +207,14 @@ function AmplitudeMeter({ dimmed, live, frozen }: { dimmed?: boolean; live?: boo
             width: 'var(--space-100)',
             height: `${height}px`,
             borderRadius: 'var(--radius-full)',
-            background: 'var(--color-accent-magenta-bold)',
+            // `frozen` (Transcribing) must stay visible per SPEC.md, not
+            // dimmed like Paused — but a static frame at the live
+            // recording color was pixel-indistinguishable from a live bar
+            // that just happened to pause mid-wave (confirmed by
+            // rendering both side by side). Swapping to text/secondary
+            // gives the frozen beat its own unmistakable color, still at
+            // full opacity, without reintroducing Paused's dimmed look.
+            background: frozen ? 'var(--color-text-secondary)' : 'var(--color-accent-magenta-bold)',
             transform: `scaleY(${animating ? scales[index] : 1})`,
             transformOrigin: 'center',
             transition: 'transform 120ms ease-out',
@@ -259,21 +266,24 @@ export function RecordControl(props: RecordControlProps) {
             live={state === 'Recording'}
             frozen={amplitudeFrozen}
           />
+          {/* Per SPEC.md's Transcribing spec ("the take is locked the
+              instant recording stops"): every control here disables the
+              moment the meter freezes, not just the caption changing. */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-600)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-150)' }}>
-              <ButtonIcon variant="Secondary" size="M" aria-label="Discard" icon={<X style={{ width: '100%', height: '100%' }} />} onClick={onDiscardClick} />
+              <ButtonIcon variant="Secondary" size="M" state={amplitudeFrozen ? 'Disabled' : 'Default'} aria-label="Discard" icon={<X style={{ width: '100%', height: '100%' }} />} onClick={onDiscardClick} />
               <p style={ACTION_LABEL_STYLE}>Discard</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-150)' }}>
               {state === 'Paused' ? (
-                <ButtonIcon variant="Secondary" size="M" aria-label="Resume" icon={<Play style={{ width: '100%', height: '100%' }} />} onClick={onResumeClick} />
+                <ButtonIcon variant="Secondary" size="M" state={amplitudeFrozen ? 'Disabled' : 'Default'} aria-label="Resume" icon={<Play style={{ width: '100%', height: '100%' }} />} onClick={onResumeClick} />
               ) : (
-                <ButtonIcon variant="Secondary" size="M" aria-label="Pause" icon={<Pause style={{ width: '100%', height: '100%' }} />} onClick={onPauseClick} />
+                <ButtonIcon variant="Secondary" size="M" state={amplitudeFrozen ? 'Disabled' : 'Default'} aria-label="Pause" icon={<Pause style={{ width: '100%', height: '100%' }} />} onClick={onPauseClick} />
               )}
               <p style={ACTION_LABEL_STYLE}>{state === 'Paused' ? 'Resume' : 'Pause'}</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-150)' }}>
-              <ButtonIcon variant="Primary" size="L" aria-label="Submit" icon={<Check style={{ width: '100%', height: '100%' }} />} onClick={onSubmitClick} />
+              <ButtonIcon variant="Primary" size="L" state={amplitudeFrozen ? 'Disabled' : 'Default'} aria-label="Submit" icon={<Check style={{ width: '100%', height: '100%' }} />} onClick={onSubmitClick} />
               <p style={ACTION_LABEL_STYLE}>Submit</p>
             </div>
           </div>

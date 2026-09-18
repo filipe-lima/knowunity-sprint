@@ -134,7 +134,12 @@ function LegacyIconButton({
   ariaLabel,
   children,
 }: {
-  size: 40 | 56;
+  // 56 is the real Figma "Add" size, unchanged. 40 was the real Figma
+  // "Send" size but sits under the 44pt touch-target minimum — bumped to
+  // 48 at every real call site below, a deliberate departure from the
+  // literal Figma pixel value for a real accessibility gate, not silently
+  // absorbed (see the send-button call site's own comment).
+  size: 40 | 48 | 56;
   variant: 'Neutral' | 'Primary';
   onClick?: () => void;
   ariaLabel: string;
@@ -252,8 +257,10 @@ export function ChatInput({ status = 'Inactive', value, onLeadingClick, onTraili
           </span>
         ) : null}
 
+        {/* 48, not the real Figma 40 — under the 44pt touch-target gate at
+            the real size; see LegacyIconButton's own comment. */}
         {HAS_SEND_BUTTON[status] ? (
-          <LegacyIconButton size={40} variant="Primary" onClick={onTrailingClick} ariaLabel="Send">
+          <LegacyIconButton size={48} variant="Primary" onClick={onTrailingClick} ariaLabel="Send">
             <Send style={{ width: '100%', height: '100%' }} />
           </LegacyIconButton>
         ) : null}

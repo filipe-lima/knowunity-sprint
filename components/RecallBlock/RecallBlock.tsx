@@ -5,20 +5,28 @@ import type { CSSProperties, HTMLAttributes, ReactNode } from 'react';
  * u3BZUg8k5p3mrOrKAnYO5c, page "New components", inside the "Recall block"
  * wrapper frame). Every prop name and option below is that component's
  * own: variant is its one VARIANT property (Transcript/Hint/Explanation/
- * Confirm), label/body its two text properties, Actions its one slot. See
- * RecallBlock.stories.tsx for the component's own written description.
+ * Confirm in Figma), label/body its two text properties, Actions its one
+ * slot. See RecallBlock.stories.tsx for the component's own written
+ * description.
  *
- * Confirmed against all four variants directly (not inferred from the
- * written description alone): Transcript, Explanation and Confirm fill
- * background/stacking; only Hint takes accent/blue/subtle. Confirm
- * genuinely inverts the emphasis of the other three — its label is the
- * heavier style (matching headline-xxs-bold) on text/primary and its body
- * the lighter one (matching caption-m-regular) on text/secondary, while
- * Transcript/Hint/Explanation share the opposite pairing: a lighter label
- * (caption-m-bold) on text/secondary (text/accent-blue-on-subtle for Hint
- * specifically) over a heavier body (body-s-regular) on text/primary.
+ * Confirmed directly (not inferred from the written description alone):
+ * Transcript and Confirm fill background/stacking; only Hint takes
+ * accent/blue/subtle. Confirm genuinely inverts the emphasis of the other
+ * variants — its label is the heavier style (matching headline-xxs-bold)
+ * on text/primary and its body the lighter one (matching caption-m-
+ * regular) on text/secondary, while Transcript/Hint share the opposite
+ * pairing: a lighter label (caption-m-bold) on text/secondary (text/
+ * accent-blue-on-subtle for Hint specifically) over a heavier body
+ * (body-s-regular) on text/primary.
+ *
+ * `Explanation` — real in Figma, not implemented here — was this
+ * component's fourth variant, used only for the "Reveal" state's
+ * re-explanation copy. Removed 2026-09-18 along with the Reveal flow it
+ * exclusively served (see docs/SPEC.md); not a case of inventing past
+ * what Figma defines, the opposite: intentionally not reproducing a real
+ * variant that no longer has anywhere to appear.
  */
-export type RecallBlockVariant = 'Transcript' | 'Hint' | 'Explanation' | 'Confirm';
+export type RecallBlockVariant = 'Transcript' | 'Hint' | 'Confirm';
 
 export interface RecallBlockProps extends HTMLAttributes<HTMLDivElement> {
   variant?: RecallBlockVariant;

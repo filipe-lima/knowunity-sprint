@@ -19,8 +19,15 @@ import { IconSlot } from '../IconSlot/IconSlot';
  * aren't real assets in this codebase — same recurring gap as every icon
  * slot — but the fixed variant->glyph pairing itself is a real, load-
  * bearing rule this component enforces, not a placeholder detail.
+ *
+ * Only 4 of the real component's 5 Figma variants are implemented here —
+ * `SaidBack` was removed 2026-09-18, on direct request, along with the
+ * "Say it back" screen it exclusively served, once that screen's only
+ * trigger (the "Reveal" flow) was confirmed gone for good. Not a case of
+ * inventing past what Figma defines — the opposite: intentionally not
+ * reproducing a real variant that no longer has anywhere to appear.
  */
-export type VerdictBadgeVariant = 'Success' | 'Almost' | 'Miss' | 'SaidBack' | 'Flagged';
+export type VerdictBadgeVariant = 'Success' | 'Almost' | 'Miss' | 'Flagged';
 
 export interface VerdictBadgeProps extends HTMLAttributes<HTMLDivElement> {
   variant?: VerdictBadgeVariant;
@@ -40,8 +47,8 @@ function AlertCircleGlyph() {
 }
 
 // variant -> fill/color/glyph, confirmed against the real component
-// (Success and Flagged fetched directly; Almost/Miss/SaidBack follow the
-// same fill/onSubtle pairing pattern, per design-system.md's table).
+// (Success and Flagged fetched directly; Almost/Miss follow the same
+// fill/onSubtle pairing pattern, per design-system.md's table).
 const VARIANT_STYLE: Record<VerdictBadgeVariant, { background: string; color: string; Glyph: () => ReactNode }> = {
   Success: {
     background: 'var(--color-feedback-success-subtle)',
@@ -59,11 +66,6 @@ const VARIANT_STYLE: Record<VerdictBadgeVariant, { background: string; color: st
     background: 'var(--color-accent-coral-subtle)',
     color: 'var(--color-accent-coral-on-subtle)',
     Glyph: AlertCircleGlyph,
-  },
-  SaidBack: {
-    background: 'var(--color-accent-brand-subtle)',
-    color: 'var(--color-accent-brand-on-subtle)',
-    Glyph: CheckCircleGlyph,
   },
   Flagged: {
     // Neutral, not a warning tint — same reasoning as Miss avoiding error.

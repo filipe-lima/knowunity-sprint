@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Loader2, CheckCircle2, Mic } from 'lucide-react';
+import { SkipForward, CheckCircle2, Mic } from 'lucide-react';
 
 import { Scaffold } from '../../components/Scaffold/Scaffold';
 import { Chips } from '../../components/Chips/Chips';
@@ -12,6 +12,7 @@ import { ButtonGroup } from '../../components/ButtonGroup/ButtonGroup';
 import { Button } from '../../components/Button/Button';
 import { Sheet } from '../../components/Sheet/Sheet';
 import { ScaffoldHeader } from '../../components/ScaffoldHeader/ScaffoldHeader';
+import { TOPIC_TERMS } from '../Loop/script';
 
 /**
  * Recall history — the other half of screen 3 (`Extra 6 — Your terms`,
@@ -45,8 +46,13 @@ import { ScaffoldHeader } from '../../components/ScaffoldHeader/ScaffoldHeader';
  *   the previous build used `--font-size-sm` (15px) for titles. Same fix
  *   for the body paragraph, also real 12px, not 15px.
  */
+// `skipped` was `accent-coral-bold` with a Loader2 (loading-spinner) glyph
+// — coral is Miss's own color elsewhere, and Loader2 reads as "in
+// progress," neither of which is what "skipped" means. Summary.tsx's own
+// OUTCOME_STYLE already draws "Skipped" as SkipForward on text-secondary;
+// matched here so the same outcome reads the same way on both screens.
 const SECTION_ICON_COLOR = {
-  skipped: 'var(--color-accent-coral-bold)',
+  skipped: 'var(--color-text-secondary)',
   recent: 'var(--color-feedback-success-bold)',
   never: 'var(--color-text-secondary)',
 } as const;
@@ -151,19 +157,19 @@ export function RecallHistory() {
             <Chips size="XS" active text="6" showLeftIcon={false} showRightIcon={false} />
           </div>
           <TermRow
-            icon={<Loader2 style={iconStyle} />}
+            icon={<SkipForward style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.skipped}
             term="Internal validity"
             source="Missed last session"
           />
           <TermRow
-            icon={<Loader2 style={iconStyle} />}
+            icon={<SkipForward style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.skipped}
             term="Sampling bias"
             source="Skipped last session"
           />
           <TermRow
-            icon={<Loader2 style={iconStyle} />}
+            icon={<SkipForward style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.skipped}
             term="Random assignment"
             source="Skipped 3 weeks ago"
@@ -189,7 +195,7 @@ export function RecallHistory() {
             icon={<CheckCircle2 style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.recent}
             term="Ecological validity"
-            source="Revealed, then said back today"
+            source="Said after a hint today"
           />
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
@@ -216,7 +222,10 @@ export function RecallHistory() {
               <Button
                 variant="Primary"
                 size="M"
-                cta="Say the 6 that are due"
+                // Was hand-typed '6', disagreeing with Hub's own hand-typed
+                // '3 terms' badge for the identical bucket — both now read
+                // from the same real script data.
+                cta={`Say the ${TOPIC_TERMS['terms-you-missed'].length} that are due`}
                 fill
                 onClick={() => router.push('/loop?topic=terms-you-missed')}
               />
@@ -243,7 +252,7 @@ export function RecallHistory() {
                   variant="Primary"
                   size="L"
                   cta="Yes, let me type"
-                  onClick={() => router.push('/loop?topic=terms-you-missed')}
+                  onClick={() => router.push('/loop?topic=terms-you-missed&mode=text')}
                 />
                 <Button
                   variant="Tertiary"
