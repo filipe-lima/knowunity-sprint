@@ -1,16 +1,18 @@
 'use client';
 
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { SkipForward, CheckCircle2, Mic } from 'lucide-react';
 
 import { Scaffold } from '../../components/Scaffold/Scaffold';
 import { Chips } from '../../components/Chips/Chips';
-import { IconSlot } from '../../components/IconSlot/IconSlot';
+import { BucketRow } from '../../components/BucketRow/BucketRow';
 import { ButtonGroup } from '../../components/ButtonGroup/ButtonGroup';
 import { Button } from '../../components/Button/Button';
 import { Sheet } from '../../components/Sheet/Sheet';
+import { MascotSlot } from '../../components/MascotSlot/MascotSlot';
+import { MascotArt } from '../../components/shared/MascotArt';
 import { ScaffoldHeader } from '../../components/ScaffoldHeader/ScaffoldHeader';
 import { TOPIC_TERMS } from '../Loop/script';
 
@@ -28,10 +30,13 @@ import { TOPIC_TERMS } from '../Loop/script';
  * - **All three sections use the same bespoke row** — not just "Never
  *   said out loud". Figma's own layer name for every row is the
  *   un-componentized `bucket / NEW` frame family (real `iconSlot` glyph +
- *   term + source line), just with a different icon/color per section.
- *   Reproduced below as one `TermRow` local component, not the 3 real
- *   `ListRow` instances this screen used for the first two sections
- *   before — wrong component for 6 of the 8 rows.
+ *   term + source line), just with a different icon/color per section —
+ *   not the 3 real `ListRow` instances this screen used for the first two
+ *   sections before (wrong component for 6 of the 8 rows). **Promoted
+ *   2026-09-18:** shares the same real `components/BucketRow/
+ *   BucketRow.tsx` Summary and Hub also use now, instead of this screen's
+ *   own separate `TermRow` copy — closing out the duplication both
+ *   `eval/scorecard-01.md` and `eval/scorecard-02.md` flagged.
  * - **Two copy corrections**, both stale Figma *layer* names vs. the real
  *   rendered characters: the first section's real heading is "Skipped,"
  *   not "Due again"; Random assignment's real subtitle is "Skipped 3
@@ -75,55 +80,6 @@ function SectionHeading({ children }: { children: string }) {
   );
 }
 
-function TermRow({ icon, iconColor, term, source }: { icon: ReactNode; iconColor: string; term: string; source: string }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%',
-        boxSizing: 'border-box',
-        gap: 'var(--space-300)',
-        padding: 'var(--space-300)',
-        borderRadius: 'var(--radius-400)',
-        background: 'var(--color-background-surface)',
-      }}
-    >
-      <IconSlot size="250" color={iconColor}>
-        {icon}
-      </IconSlot>
-      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: '1 1 auto' }}>
-        <p
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-family-default)',
-            fontWeight: 'var(--font-weight-semibold)',
-            fontSize: 'var(--font-size-xs)',
-            lineHeight: 'var(--font-line-height-xs)',
-            letterSpacing: 'var(--font-tracking-loose)',
-            color: 'var(--color-text-primary)',
-          }}
-        >
-          {term}
-        </p>
-        <p
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-family-default)',
-            fontWeight: 'var(--font-weight-regular)',
-            fontSize: 'var(--font-size-xs)',
-            lineHeight: 'var(--font-line-height-xs)',
-            letterSpacing: 'var(--font-tracking-loose)',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          {source}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 const BODY_COPY =
   '47 terms you have met, and where each one stands now. Saying a term once is not the same as knowing it, so this shows when, not whether.';
 
@@ -156,96 +112,117 @@ export function RecallHistory() {
             <SectionHeading>Skipped</SectionHeading>
             <Chips size="XS" active text="6" showLeftIcon={false} showRightIcon={false} />
           </div>
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<SkipForward style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.skipped}
-            term="Internal validity"
-            source="Missed last session"
+            title="Internal validity"
+            subtitle="Missed last session"
           />
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<SkipForward style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.skipped}
-            term="Sampling bias"
-            source="Skipped last session"
+            title="Sampling bias"
+            subtitle="Skipped last session"
           />
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<SkipForward style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.skipped}
-            term="Random assignment"
-            source="Skipped 3 weeks ago"
+            title="Random assignment"
+            subtitle="Skipped 3 weeks ago"
           />
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
             <SectionHeading>Said recently</SectionHeading>
             <Chips size="XS" text="22" showLeftIcon={false} showRightIcon={false} />
           </div>
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<CheckCircle2 style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.recent}
-            term="Construct validity"
-            source="Said unaided today"
+            title="Construct validity"
+            subtitle="Said unaided today"
           />
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<CheckCircle2 style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.recent}
-            term="Confounding variable"
-            source="Said after a hint today"
+            title="Confounding variable"
+            subtitle="Said after a hint today"
           />
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<CheckCircle2 style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.recent}
-            term="Ecological validity"
-            source="Said after a hint today"
+            title="Ecological validity"
+            subtitle="Said after a hint today"
           />
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
             <SectionHeading>Never said out loud</SectionHeading>
             <Chips size="XS" text="19" showLeftIcon={false} showRightIcon={false} />
           </div>
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<Mic style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.never}
-            term="Operational definition"
-            source="From Research Methods, read Tuesday"
+            title="Operational definition"
+            subtitle="From Research Methods, read Tuesday"
           />
-          <TermRow
+          <BucketRow
+            titleSize="xs"
             icon={<Mic style={iconStyle} />}
             iconColor={SECTION_ICON_COLOR.never}
-            term="Cell membrane"
-            source="From Cell biology, read last week"
-          />
-
-          <ButtonGroup
-            variant="Vertical"
-            size="M"
-            primary={
-              <Button
-                variant="Primary"
-                size="M"
-                // Was hand-typed '6', disagreeing with Hub's own hand-typed
-                // '3 terms' badge for the identical bucket — both now read
-                // from the same real script data.
-                cta={`Say the ${TOPIC_TERMS['terms-you-missed'].length} that are due`}
-                fill
-                onClick={() => router.push('/loop?topic=terms-you-missed')}
-              />
-            }
-            secondary={
-              <Button
-                variant="Secondary"
-                size="M"
-                cta="I can't speak right now"
-                fill
-                onClick={() => setSheetOpen(true)}
-              />
-            }
+            title="Cell membrane"
+            subtitle="From Cell biology, read last week"
           />
         </>
+      }
+      // Was inside middleContent's own scrollable fragment, at the tail end
+      // of 8 stacked rows — meaning it scrolled away with the list instead
+      // of staying reachable, unlike every other screen's real bottomContent
+      // action. Moved into the slot Scaffold actually built for this.
+      bottomContent={
+        <ButtonGroup
+          variant="Vertical"
+          size="M"
+          primary={
+            <Button
+              variant="Primary"
+              size="M"
+              // Was hand-typed '6', disagreeing with Hub's own hand-typed
+              // '3 terms' badge for the identical bucket — both now read
+              // from the same real script data.
+              cta={`Say the ${TOPIC_TERMS['terms-you-missed'].length} that are due`}
+              fill
+              onClick={() => router.push('/loop?topic=terms-you-missed')}
+            />
+          }
+          secondary={
+            <Button
+              variant="Secondary"
+              size="M"
+              cta="I can't speak right now"
+              fill
+              onClick={() => setSheetOpen(true)}
+            />
+          }
+        />
       }
       showBottomSheetBackground={sheetOpen}
       bottomSheetOnly={
         sheetOpen ? (
-          <Sheet
+          <>
+            {/* Every other place Knowie speaks to the student carries the
+                mascot — this screen inlines its own Sheet rather than
+                sharing screens/CannotSpeak/CannotSpeakSheet.tsx, so it
+                needed the same fix separately. */}
+            <MascotSlot size="XL" crop="Full">
+              <MascotArt pose="standby" />
+            </MascotSlot>
+            <Sheet
             actions={
               <>
                 <Button
@@ -257,12 +234,16 @@ export function RecallHistory() {
                 <Button
                   variant="Tertiary"
                   size="M"
-                  cta="No, back to home"
-                  onClick={() => setSheetOpen(false)}
+                  cta="Back to Recall Hub"
+                  onClick={() => {
+                    setSheetOpen(false);
+                    router.push('/hub');
+                  }}
                 />
               </>
             }
-          />
+            />
+          </>
         ) : undefined
       }
     />

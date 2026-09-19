@@ -9,7 +9,7 @@ import { Scaffold } from '../../components/Scaffold/Scaffold';
 import { TopBar } from '../../components/TopBar/TopBar';
 import { SessionHero } from '../../components/SessionHero/SessionHero';
 import { XpPill } from '../../components/XpPill/XpPill';
-import { IconSlot } from '../../components/IconSlot/IconSlot';
+import { BucketRow } from '../../components/BucketRow/BucketRow';
 import { ButtonGroup } from '../../components/ButtonGroup/ButtonGroup';
 import { Button } from '../../components/Button/Button';
 import { MascotSlot } from '../../components/MascotSlot/MascotSlot';
@@ -73,66 +73,20 @@ export interface SummaryResultRow {
   flagged?: boolean;
 }
 
-// Figma calls this frame `bucket / NEW` — a bespoke, un-componentized row,
-// not a real ListRow instance (same distinction this project already
-// draws elsewhere for un-componentized Figma content). Logged in
-// docs/component-gaps.md.
-function ResultRow({ icon, color, title, subtitle, score }: { icon: ReactNode; color: string; title: string; subtitle: string; score: number }) {
+// Score rendering shared by every BucketRow instance below — kept local
+// since only this screen needs a numeric trailing value styled this way.
+function ScoreTrailing({ score }: { score: number }) {
   return (
-    <div
+    <span
       style={{
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%',
-        boxSizing: 'border-box',
-        gap: 'var(--space-300)',
-        padding: 'var(--space-300)',
-        borderRadius: 'var(--radius-400)',
-        background: 'var(--color-background-surface)',
+        fontFamily: 'var(--font-family-default)',
+        fontWeight: 'var(--font-weight-semibold)',
+        fontSize: 'var(--font-size-sm)',
+        color: 'var(--color-text-primary)',
       }}
     >
-      <IconSlot size="250" color={color}>
-        {icon}
-      </IconSlot>
-      <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: '1 1 auto' }}>
-        <p
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-family-default)',
-            fontWeight: 'var(--font-weight-semibold)',
-            fontSize: 'var(--font-size-sm)',
-            lineHeight: 'var(--font-line-height-xs)',
-            letterSpacing: 'var(--font-tracking-loose)',
-            color: 'var(--color-text-primary)',
-          }}
-        >
-          {title}
-        </p>
-        <p
-          style={{
-            margin: 0,
-            fontFamily: 'var(--font-family-default)',
-            fontWeight: 'var(--font-weight-regular)',
-            fontSize: 'var(--font-size-xs)',
-            lineHeight: 'var(--font-line-height-xs)',
-            letterSpacing: 'var(--font-tracking-loose)',
-            color: 'var(--color-text-secondary)',
-          }}
-        >
-          {subtitle}
-        </p>
-      </div>
-      <span
-        style={{
-          fontFamily: 'var(--font-family-default)',
-          fontWeight: 'var(--font-weight-semibold)',
-          fontSize: 'var(--font-size-sm)',
-          color: 'var(--color-text-primary)',
-        }}
-      >
-        {score}
-      </span>
-    </div>
+      {score}
+    </span>
   );
 }
 
@@ -189,9 +143,6 @@ export interface SummaryProps {
   unaidedSummary: string;
   results: SummaryResultRow[];
   isAllClear: boolean;
-  /** Required when `isAllClear` is false — drives the primary button's
-   *  "Keep going, N terms left" label. */
-  remainingCount?: number;
 }
 
 export function Summary({
@@ -200,7 +151,6 @@ export function Summary({
   unaidedSummary,
   results,
   isAllClear,
-  remainingCount,
 }: SummaryProps) {
   const router = useRouter();
 
@@ -223,6 +173,14 @@ export function Summary({
 
   return (
     <Scaffold
+      // Deliberately no back control, unlike Hub/Recall history's labeled
+      // ScaffoldHeader or Loop's own TopBar chevron — this is a terminal
+      // screen reached only after a session actually ends, and there's no
+      // real "back" destination that would make sense (Loop is already
+      // finished; going back to it mid-completed-session isn't a real
+      // state). The two real exits are the bottom actions below ("Back to
+      // Recall" / "Keep going"), not a header control. Stated here so this
+      // reads as a deliberate choice, not an unexplained omission.
       topNavigation={<TopBar variant="Centered" title="Results" />}
       middleContent={
         <>
@@ -239,19 +197,19 @@ export function Summary({
             if (count === 0) return null;
             const style = OUTCOME_STYLE[outcome];
             return (
-              <ResultRow
+              <BucketRow
                 key={outcome}
                 icon={style.icon}
-                color={style.color}
+                iconColor={style.color}
                 title={outcome}
                 subtitle={`${count} term${count === 1 ? '' : 's'}`}
-                score={style.score * count}
+                trailing={<ScoreTrailing score={style.score * count} />}
               />
             );
           })}
           {isAllClear ? (
             // Was a hand-rolled div + two <p> tags, sitting directly on
-            // background/page with no card — every ResultRow above it
+            // background/page with no card — every BucketRow above it
             // sits on background/surface. SessionHero's own Center/Card
             // story is already built for exactly this moment (named
             // 'Center, Card (all-clear)') and SessionHero is already
@@ -286,7 +244,12 @@ export function Summary({
               <Button
                 variant="Secondary"
                 size="L"
-                cta={`Keep going, ${remainingCount} terms left`}
+                // Relabeled 2026-09-19: this restarts the whole topic from
+                // its first term (Loop always begins a session at
+                // termIndex 0) — it doesn't resume only the remaining
+                // terms, so the label no longer promises a count this
+                // button can't actually honor.
+                cta="Practice this topic again"
                 fill
                 onClick={() => router.push(`/loop?topic=${topic}`)}
               />

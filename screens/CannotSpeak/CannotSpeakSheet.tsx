@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Scaffold } from '../../components/Scaffold/Scaffold';
 import { Sheet } from '../../components/Sheet/Sheet';
 import { Button } from '../../components/Button/Button';
+import { MascotSlot } from '../../components/MascotSlot/MascotSlot';
+import { MascotArt } from '../../components/shared/MascotArt';
 
 /**
  * Screen 1 from docs/SPEC.md — the Cannot-speak sheet. No Figma frame of
@@ -46,24 +48,36 @@ export function CannotSpeakSheet() {
       middleContent={<></>}
       showBottomSheetBackground
       bottomSheetOnly={
-        <Sheet
-          actions={
-            <>
-              <Button
-                variant="Primary"
-                size="L"
-                cta="Yes, let me type"
-                onClick={() => router.push('/loop?mode=text')}
-              />
-              <Button
-                variant="Tertiary"
-                size="M"
-                cta="No, back to home"
-                onClick={() => router.push('/hub')}
-              />
-            </>
-          }
-        />
+        <>
+          {/* Every other place Knowie speaks to the student carries the
+              mascot (Home's KnowieMessage, Loop's Peek through every
+              recording state, Summary's all-clear hero) — this was the
+              one screen where the student hits a wall and Knowie never
+              shows up. Scaffold's own bottomSheetOnly slot is documented
+              as holding more than one child by design, so this sits as a
+              real sibling of Sheet, not a prop Sheet doesn't have. */}
+          <MascotSlot size="XL" crop="Full">
+            <MascotArt pose="standby" />
+          </MascotSlot>
+          <Sheet
+            actions={
+              <>
+                <Button
+                  variant="Primary"
+                  size="L"
+                  cta="Yes, let me type"
+                  onClick={() => router.push('/loop?mode=text')}
+                />
+                <Button
+                  variant="Tertiary"
+                  size="M"
+                  cta="Back to Recall Hub"
+                  onClick={() => router.push('/hub')}
+                />
+              </>
+            }
+          />
+        </>
       }
     />
   );

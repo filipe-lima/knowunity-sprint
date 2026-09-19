@@ -311,3 +311,19 @@ of building a second inline copy (see the skill for that process).
   a real reconnect (a working REST token, or a confirmed-responsive
   Desktop Bridge plugin) before `COMMITED FLOW FINAL WITHOUT COMPONENTS`
   and the components page can be brought back in line with the code.
+- **Summary's grouped rows don't reuse `VerdictBadge`, flagged not fixed,
+  2026-09-19.** `eval` critic-ambition (both rounds) proposed replacing
+  each row's bare `IconSlot` in `screens/Summary/Summary.tsx` with a real
+  `<VerdictBadge variant={...} label={...} />`, since `VerdictBadge`
+  already encodes the exact variant→{glyph, color, label} pattern being
+  hand-rolled there. That proposal was written against the old per-term
+  row layout. Since then, Summary's rows were regrouped by outcome (one
+  row per outcome type, a bare count subtitle, no term names — see
+  `BucketRow`'s own doc comment). `VerdictBadge` doesn't drop in cleanly
+  onto the new shape: it's a full pill with its own baked-in label (e.g.
+  "Got it"), which would sit redundantly next to the row's own title text
+  ("Said it unaided") rather than replacing an icon 1:1. Doing this
+  properly means changing the row's visual shape (dropping the separate
+  title text in favor of the pill itself, or some other real design
+  decision), not a prop swap — left open rather than forced, pending a
+  real look at both versions rendered side by side.

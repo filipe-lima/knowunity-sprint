@@ -93,6 +93,13 @@ for (const family of FEEDBACK_FAMILIES) {
 }
 pairs.push(['color-text-inverse', 'color-background-inverse']);
 
+// Button.tsx's real Primary variant (resolveButtonColors.ts): label/icon on
+// interactive/primary-on sits on the fill directly, both at rest and
+// pressed — the single most-used interactive pairing in the app, never
+// previously checked by any critic pass or script.
+pairs.push(['color-interactive-primary-on', 'color-interactive-primary-default']);
+pairs.push(['color-interactive-primary-on', 'color-interactive-primary-active']);
+
 // --- Check every pairing, report, fail on any miss ---
 const MIN_CONTRAST = 4.5;
 let failed = false;

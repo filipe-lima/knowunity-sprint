@@ -601,8 +601,10 @@ there), rather than sitting empty.
 
 **Other properties.** `title` TEXT, `body` TEXT, `footnote` TEXT,
 `showFootnote` BOOLEAN. One slot, `Actions`, now defaulting to a Primary/L
-"Yes, let me type" button above a Tertiary/M "No, back to home" button
-(matching real content), rather than sitting empty.
+"Yes, let me type" button above a Tertiary/M "Back to Recall Hub" button
+(matching real content — relabeled 2026-09-19 from "No, back to home,"
+which didn't match any real screen's actual `/hub` destination), rather
+than sitting empty.
 
 **What it means.** N/A — no states.
 

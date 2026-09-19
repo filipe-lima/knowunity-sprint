@@ -1,6 +1,6 @@
 # Grading rubric
 
-For grading this prototype (the voice active-recall feature). Six
+For grading this prototype (the voice active-recall feature). Seven
 dimensions, each scored 1-10. Anchors below are written against this
 project specifically — `docs/design-brief.md`'s hard constraints and
 mandate, `docs/voice-ux-reference.md`'s six principles and states
@@ -21,6 +21,31 @@ generic design-review boilerplate.
   verification. Loading the story, watching it animate, and confirming
   it reads as live is. If a dimension wasn't actually rendered/measured/
   tested, its ceiling is 7, regardless of how clean the source looks.
+
+---
+
+## Calibration reference
+
+Hand-scored by the product owner against a real user test session
+(Recall Hub → Loop's recording/verdict/correction-control flow →
+Summary, 2026-09-19). **When a critic is unsure between two adjacent
+scores, compare against this table before defaulting to the anchor
+text alone** — it's the reference read, not a hypothetical.
+
+| Dimension | Score | One-line reason |
+|---|---|---|
+| System fidelity | 7 | Consistent with Storybook and the components as designed. |
+| Coherence | 6 | Convention isn't always the same — tapping the XP pill or "That's not what I said" acted like Try again, unexpected outside the real CTA. |
+| Craft | 7 | States are all there; little to add. |
+| UX judgment | 4 | Zoom/resolution hid the mic and the CTAs; Hub's two CTAs felt redundant when tapping the card should be enough. |
+| Accessibility | 7 | Seemed fine; XP color on the dark background is occasionally low-contrast but held up. |
+| Structure | 4 | Same root cause as UX judgment — CTAs should sit at the bottom without requiring a scroll. |
+
+**Delivery-surface fidelity has no score in this table** — it didn't
+exist as its own axis when this session was scored; its anchors below
+are founded on this same session's mic/CTA-visibility finding, folded
+out of Structure and UX judgment. Score the next real test session on
+it explicitly and add the result here.
 
 ---
 
@@ -59,25 +84,37 @@ one visual language, one set of interaction conventions applied the
 same way everywhere — or as screens designed in isolation and stapled
 together after the fact.
 
-- **4 —** The same job is solved differently in different places with
-  no stated reason: two different "back" affordances, CTA priority that
-  flips screen to screen without a documented rationale, an icon/color
-  pairing that means one thing here and something else two screens
-  later.
+**Calibration note.** A single control silently doing something the
+product's own convention forbids — e.g. a non-primary control (an
+info pill, a correction button) triggering the same state change as
+the one real CTA — is a real defect, but isolated to one flow it
+reads as a **6**, not a 4. Reserve 4 for divergence that *repeats*
+across the product with no stated reason.
+
+- **4 —** The same job is solved differently in **more than one
+  place** with no stated reason: two different "back" affordances, CTA
+  priority that flips screen to screen without a documented rationale,
+  an icon/color pairing that means one thing here and something else
+  two screens later.
 - **6 —** The product broadly reads as one thing — shared row anatomy,
   a consistent verdict color/icon language, a consistent CTA hierarchy —
   but a side-by-side comparison finds a few unreconciled seams: two
   structurally identical patterns built as separate one-offs before
-  anyone noticed they were the same shape, or a late addition (a new
+  anyone noticed they were the same shape, a late addition (a new
   outcome type, a new state) that doesn't cleanly fit the taxonomy the
-  rest of the product already established.
+  rest of the product already established, **or one interactive
+  control that silently breaks the product's own "only the real CTA
+  advances state" convention in an otherwise-consistent flow** (the
+  calibration reference's XP-pill/correction-control example is this
+  tier, not a 4).
 - **9 —** Every recurring pattern behaves identically everywhere it
   appears — verdict colors/icons, row anatomy, CTA hierarchy, the
   correction control's placement and timing, locked/disabled treatment —
   and every deliberate exception is stated as a deliberate exception,
   not left as an unexplained inconsistency. Flipping rapidly between
   every screen turns up nothing that contradicts the product's own
-  established rules.
+  established rules, and no control ever does something its own label
+  doesn't promise.
 
 ### 3. Craft — High
 
@@ -173,35 +210,70 @@ secondary one).
 actually render — `design-system.md` rule 8 ("never build a screen
 outside the scaffold, and never put content outside the four slots").
 
+**Calibration note.** A rule violation the project's own documentation
+already admits to — a slot rule *stated* as broken in
+`design-system.md`, not just suspected from reading the component —
+is a *known* defect, not an *untested* one. It cannot be scored at
+the 6-tier below on the reasoning that it "hasn't been confirmed to
+break." Whether it's actually usable on a real device/viewport at
+delivery size is a separate question — see "Delivery-surface
+fidelity."
+
 - **4 —** Visible breakage: content overflows its container, a screen
   fails to render, an element sits outside its intended frame, a slot
-  renders empty where content was expected.
+  renders empty where content was expected, **or a slot rule the
+  project's own documentation already states is being broken** (not
+  merely suspected).
 - **6 —** Renders cleanly and everything lands where it should at
-  realistic content lengths, but hasn't been stress-tested against
-  genuine edge-case content (the longest realistic title, a 5-line
-  summary, an empty state that's never actually been triggered).
+  realistic content lengths within the design canvas, but hasn't been
+  stress-tested against genuine edge-case content (the longest
+  realistic title, a 5-line summary, an empty state that's never
+  actually been triggered).
 - **9 —** Renders cleanly and holds up under real edge-case content,
   confirmed by actually rendering that content, not inferred from the
   markup. Every screen sits on a real scaffold root; nothing lives
-  outside the four slots.
+  outside the four slots; no slot rule is left in a self-documented
+  broken state.
+
+### 7. Delivery-surface fidelity — Medium
+
+**What it's scoring.** Does the screen actually work the way a real
+person will see it — the real device/viewer at its real zoom level —
+not just the idealized 390×844 design canvas `Scaffold` renders into.
+Deliberately separate from Structure: a screen can honor every
+scaffold/slot rule in the abstract and still be unusable in practice
+if the delivered surface doesn't match the canvas 1:1.
+
+- **4 —** A Must-priority control (the mic trigger, a primary CTA) is
+  not visible without scrolling or zooming, on the actual device/
+  viewer used to test — confirmed by watching a real person fail to
+  find it, not inferred from the canvas dimensions.
+- **6 —** Everything is reachable on the real delivery surface, but it
+  takes an extra scroll or a moment of hunting the design canvas
+  itself never shows — a real person gets there, but not on the first
+  look.
+- **9 —** Confirmed, on the actual device/viewer a real test uses,
+  that every Must-priority control is visible without scrolling or
+  zooming on first load — verified by watching someone reach it
+  immediately, not by re-checking the 390×844 canvas.
 
 ---
 
 ## Combining scores
 
 Weight order for judgment calls and tie-breaks: **System fidelity,
-Coherence, Craft, and UX judgment (High) outweigh Accessibility
-(Medium), which outweighs Structure (Low).** A submission that's
-structurally flawless but fails on system fidelity or UX judgment is a
-worse submission than one with minor structural rough edges but real
-craft and judgment — score and discuss accordingly, don't average the
-six into a false equivalence.
+Coherence, Craft, and UX judgment (High) outweigh Accessibility and
+Delivery-surface fidelity (Medium), which outweigh Structure (Low).**
+A submission that's structurally flawless but fails on system fidelity
+or UX judgment is a worse submission than one with minor structural
+rough edges but real craft and judgment — score and discuss
+accordingly, don't average the seven into a false equivalence.
 
 ---
 
 ## Hard gates
 
-Independent of the six dimensions above. Each is binary — pass or
+Independent of the seven dimensions above. Each is binary — pass or
 fail, verified by measuring or testing, not read from source. **Any
 failed gate fails the submission regardless of dimension scores.**
 

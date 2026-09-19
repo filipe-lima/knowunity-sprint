@@ -84,8 +84,23 @@ export function Scaffold({
         display: 'flex',
         flexDirection: 'column',
         boxSizing: 'border-box',
+        // Hardcoded, unbound 390×844 — no device-size token exists in
+        // tokens/tokens.json, same real gap TopBar's own width already
+        // flags (see its doc comment: "no mobile screen-width variable
+        // exists in the file; confirmed with Filipe, hardcoded
+        // deliberately"). Reproduced as a literal for the same reason,
+        // not invented as a new token and not silently absorbed.
         width: '390px',
-        height: '844px',
+        // min(), not a plain 844px: a real phone's visible viewport (after
+        // browser chrome) is often shorter than 844px, and this box had no
+        // relationship to it — the bottom of bottomContent, where the
+        // primary CTAs live, fell below the fold, requiring a page-level
+        // scroll to reach (eval/rubric.md's "Delivery-surface fidelity"
+        // gap, confirmed live in user testing). Shrinking to fit the real
+        // viewport lets middleContent's own overflowY:auto absorb the
+        // difference instead, exactly what that region is already built
+        // for — bottomContent stays visible without a page scroll.
+        height: 'min(844px, 100dvh)',
         overflow: 'hidden',
         borderRadius: 'var(--radius-600)',
         background: 'var(--color-background-page)',

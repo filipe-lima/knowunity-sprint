@@ -27,7 +27,12 @@ import { Button } from '../Button/Button';
  * So, same deliberate departure from the TopBar/RecordControl/Composer
  * "leave real slots empty" precedent as KnowieMessage's Actions, this
  * component's own `actions` prop defaults to that real button pair when
- * omitted, using the already-built Button component.
+ * omitted, using the already-built Button component. **Relabeled
+ * 2026-09-19:** every real screen call site overrides this default with
+ * its own explicit `actions`, and all four were relabeled "Back to Recall
+ * Hub" — the literal "No, back to home" text didn't match any of their
+ * real `/hub` destinations. Updated here too so this default (and its
+ * story) stay consistent with the real content it claims to mirror.
  *
  * The Grabber (the drag handle) and the sheet's own rounded-top-only
  * shape (only the top corners are bound to Radius/800; the bottom corners
@@ -58,7 +63,7 @@ export interface SheetProps extends Omit<HTMLAttributes<HTMLDivElement>, 'childr
 const DEFAULT_ACTIONS = (
   <>
     <Button variant="Primary" size="L" cta="Yes, let me type" />
-    <Button variant="Tertiary" size="M" cta="No, back to home" />
+    <Button variant="Tertiary" size="M" cta="Back to Recall Hub" />
   </>
 );
 

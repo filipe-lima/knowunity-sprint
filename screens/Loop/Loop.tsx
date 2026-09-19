@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { ChevronLeft, Mic, Pencil } from 'lucide-react';
+import { ChevronLeft, Mic } from 'lucide-react';
 
 import { Scaffold } from '../../components/Scaffold/Scaffold';
 import { RecallCard } from '../../components/RecallCard/RecallCard';
@@ -107,9 +107,24 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
     setResults((prev) => [...prev, row]);
   }
 
-  function goToNextTerm() {
+  // `pendingRow`: handleTopSkip calls recordResult (setResults, async) then
+  // this function synchronously, in the same tick — `results` above is
+  // still the pre-update closure value at that point, so the just-recorded
+  // skip would be silently dropped from the final-term summary/allClear
+  // check without this. Every other recordResult caller runs a full render
+  // cycle before the student can reach "Next term", so this only matters
+  // for skip.
+  function goToNextTerm(pendingRow?: SummaryResultRow) {
     if (termIndex + 1 >= terms.length) {
-      const allClear = ![...results].some((r) => r.flagged);
+      const finalResults = pendingRow ? [...results, pendingRow] : results;
+      const allClear = !finalResults.some((r) => r.flagged);
+      // Real per-term outcomes, handed to Summary via sessionStorage rather
+      // than the URL — Summary previously always rendered one of two
+      // hardcoded fixture result sets regardless of what actually happened
+      // this session (eval/scorecard-03.md's most severe UX-judgment
+      // finding, confirmed live). Only one session is ever in flight in
+      // this prototype, so one fixed key is enough — no per-session id.
+      sessionStorage.setItem('knowie:lastSession', JSON.stringify({ topic: topicSlug, results: finalResults }));
       router.push(`/summary?topic=${topicSlug}${allClear ? '&allClear=1' : ''}`);
       return;
     }
@@ -206,18 +221,6 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
     }, 900);
   }
 
-  // New 2026-09-16, on direct request: the correction control used to
-  // disappear once a verdict resolved (Figma's own real content only ever
-  // shows it on Wait — confirmed live, node 13759:45381 — so this is a
-  // genuinely new decision, not a stale-docs correction). Persisting it
-  // through every verdict means a student can redo a take that already
-  // scored — when that's the case, the already-recorded result for this
-  // term is removed first so Summary never double-counts it.
-  function handleEditTranscript() {
-    setResults((prev) => prev.filter((r) => r.term !== term.term));
-    setLoopState('idle');
-  }
-
   // Shared by outcomeRow() below and the verdict-success render branch,
   // so the two never disagree on which outcome a given attempt earned.
   // Only 4 outcomes are ever recorded: any retry — hinted or not — scores
@@ -246,8 +249,9 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
 
   function handleTopSkip() {
     if (skipDisabled) return;
-    recordResult(outcomeRow('skipped'));
-    goToNextTerm();
+    const row = outcomeRow('skipped');
+    recordResult(row);
+    goToNextTerm(row);
   }
 
   function handleDispute(origin: 'almost' | 'miss') {
@@ -394,26 +398,6 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
     );
   }
 
-  // New 2026-09-16, on direct request: persisted through every verdict
-  // now, not just Wait (see handleEditTranscript's own comment for why).
-  // Text mode never renders this — sprint-context.md's existing rule for
-  // Wait ("no transcript-correction control... no transcript to
-  // mis-hear") applies identically wherever this control now lives, not
-  // just Wait specifically; a typed answer was never mis-transcribed.
-  function renderCorrectionControl() {
-    if (textMode) return null;
-    return (
-      <Button
-        variant="Tertiary"
-        size="S"
-        cta="That's not what I said"
-        showLeftIcon
-        leftIcon={<Pencil style={{ width: '100%', height: '100%' }} />}
-        onClick={handleEditTranscript}
-      />
-    );
-  }
-
   // Per the real Figma screens: the card only ever holds term info, the
   // verdict badge, feedback text, the transcript block and its correction
   // control (RecallCard's own Content-slot description: "badge, aside,
@@ -475,9 +459,7 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
           mascot: renderMascot('Peek'),
           card: (
             <RecallBlock variant="Transcript" label="You said" body={attempt.transcript}>
-              {checkingDone ? (
-                renderCorrectionControl()
-              ) : (
+              {checkingDone ? null : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-100)' }}>
                   {/* Static icon+word read as a dead state, not "an answer
                       is coming" (voice-ux-reference.md Principle 6) —
@@ -519,12 +501,10 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
                   <VerdictBadge variant="Success" label={VERDICT_LABEL.success} />
                   <XpPill size="S" label={`+${OUTCOME_SCORE[successLabel]} XP`} />
                 </div>
-                <RecallBlock variant="Transcript" label="You said" body={attempt.transcript}>
-                  {renderCorrectionControl()}
-                </RecallBlock>
+                <RecallBlock variant="Transcript" label="You said" body={attempt.transcript} />
               </>
             ),
-            bottom: <Button variant="Primary" size="L" cta="Next term" onClick={goToNextTerm} />,
+            bottom: <Button variant="Primary" size="L" cta="Next term" onClick={() => goToNextTerm()} />,
           };
         }
         if (verdict === 'flagged') {
@@ -536,12 +516,10 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
                 <p style={{ fontFamily: 'var(--font-family-default)', fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
                   Sent. It stays out of your practice list.
                 </p>
-                <RecallBlock variant="Transcript" label="You said" body={attempt.transcript}>
-                  {renderCorrectionControl()}
-                </RecallBlock>
+                <RecallBlock variant="Transcript" label="You said" body={attempt.transcript} />
               </>
             ),
-            bottom: <Button variant="Primary" size="L" cta="Next term" onClick={goToNextTerm} />,
+            bottom: <Button variant="Primary" size="L" cta="Next term" onClick={() => goToNextTerm()} />,
           };
         }
         const isMiss = verdict === 'miss';
@@ -560,9 +538,7 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
                   {attempt.had}
                 </p>
               )}
-              <RecallBlock variant="Transcript" label="You said" body={attempt.transcript}>
-                {renderCorrectionControl()}
-              </RecallBlock>
+              <RecallBlock variant="Transcript" label="You said" body={attempt.transcript} />
               <Button
                 variant="Tertiary"
                 size="S"
@@ -621,11 +597,17 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
                   "the real dispute confirm reference instances," i.e.
                   this exact moment (see RecallBlock's doc comment) —
                   reused here instead of the hand-rolled <p> pair this
-                  used to be. */}
+                  used to be.
+                  Body softened 2026-09-19, on direct request: the 0-point
+                  fact stays (sprint-context.md's own reasoning for stating
+                  the real consequence, not a softer implied one, still
+                  applies — this is the only place a student learns a
+                  dispute scores 0 before committing), but "No points
+                  either way" read as blunter than it needed to. */}
               <RecallBlock
                 variant="Confirm"
                 label="You're saying your answer was right?"
-                body="We will look at it to improve the judging. It stays out of your practice list. No points either way."
+                body="We will look at it to improve the judging. It stays out of your practice list — this one won't count toward your score."
               />
             </>
           ),
@@ -651,15 +633,17 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
       middleContent={
         <>
           {mascot}
+          {/* No onClick here on purpose — a tap-to-advance affordance used
+              to live on this card, but it was never a documented feature
+              (no Figma reference, no SPEC.md line) and it bubbled clicks
+              from the correction control nested inside it on the same two
+              verdicts, silently skipping the term instead of letting the
+              student redo it. The "Next term" Button below already covers
+              this action, accessibly, on both branches. */}
           <RecallCard
             term={term.term}
             instruction={term.instruction}
             provenance={term.provenance}
-            onClick={
-              loopState === 'verdict' && (verdictKind === 'success' || verdictKind === 'flagged')
-                ? goToNextTerm
-                : undefined
-            }
           >
             {card}
           </RecallCard>
@@ -669,7 +653,15 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
       showBottomSheetBackground={sheetOpen}
       bottomSheetOnly={
         sheetOpen ? (
-          <Sheet
+          <>
+            {/* Every other place Knowie speaks to the student carries the
+                mascot — this screen inlines its own Sheet rather than
+                sharing screens/CannotSpeak/CannotSpeakSheet.tsx, so it
+                needed the same fix separately. */}
+            <MascotSlot size="XL" crop="Full">
+              <MascotArt pose="standby" />
+            </MascotSlot>
+            <Sheet
             actions={
               <>
                 <Button
@@ -681,10 +673,19 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
                     setSheetOpen(false);
                   }}
                 />
-                <Button variant="Tertiary" size="M" cta="No, back to home" onClick={() => setSheetOpen(false)} />
+                <Button
+                  variant="Tertiary"
+                  size="M"
+                  cta="Back to Recall Hub"
+                  onClick={() => {
+                    setSheetOpen(false);
+                    router.push('/hub');
+                  }}
+                />
               </>
             }
-          />
+            />
+          </>
         ) : undefined
       }
     />

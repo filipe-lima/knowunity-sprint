@@ -51,15 +51,17 @@ completion record.
 
 **States.** One. Not sticky-vs-not, not denied-vs-voluntary — the interview
 settled that permission denial routes into this exact same sheet with the
-same copy, and Hub's own "I can't speak right now" opens this same sheet
-rather than skipping straight to text. There's one sheet, three doors into
-it (Hub's secondary, Loop's escape control, an OS permission denial).
+same copy. **Updated 2026-09-19:** Hub's own "I can't speak right now"
+door was removed once single-tap-start made it Hub's second/redundant CTA
+— down to two doors into this one sheet now (Loop's escape control, an OS
+permission denial), both still real and independently reachable.
 
 **What the student can do.** Tap **"Yes, let me type"** (`Button`,
 Primary/L, per `Sheet`'s real default Actions) → enters Loop in text mode,
-sticky for the rest of the session, verdict logic unchanged. Tap **"No,
-back to home"** (`Button`, Tertiary/M) → returns to Hub, keeps any set
-already built (per `sprint-context.md`).
+sticky for the rest of the session, verdict logic unchanged. Tap **"Back to
+Recall Hub"** (`Button`, Tertiary/M — relabeled 2026-09-19 from "No, back to
+home," which didn't match its real `/hub` destination) → returns to Hub,
+keeps any set already built (per `sprint-context.md`).
 
 ---
 
@@ -353,19 +355,34 @@ beat.
 resolved transcript (`sprint-context.md`: "renders the resolved transcript
 ... not a typing indicator").
 
-**What the student can do.** Read the transcript. Tap **"that's not what I
-said"** (`RecallBlock`'s real `Actions` slot control) → back to Idle for a
-re-record, no verdict. Otherwise the judge resolves and the screen moves to
-a Verdict state automatically (§ Verdicts) — no tap required to leave Wait.
+**What the student can do.** Read the transcript. Otherwise the judge
+resolves and the screen moves to a Verdict state automatically
+(§ Verdicts) — no tap required to leave Wait.
 
-**Updated 2026-09-16, on direct request:** this control is no longer
+**Removed entirely 2026-09-19, on direct request** (superseding the two
+updates below, kept for history): this state used to also offer a
+**"that's not what I said"** correction control (`RecallBlock`'s `Actions`
+slot). It never did true inline editing despite the "pencil-marked, edit
+this answer" framing the updates below describe — tapping it always just
+discarded the attempt and reset to Idle for a full re-record. Real inline
+editing was considered and declined when this was revisited: no editable
+text-input primitive exists anywhere in this codebase, and the verdict was
+never actually derived from transcript content (`screens/Loop/script.ts`
+picks it by a fixed index) — an edited transcript would have nothing real
+to feed into without inventing new judging logic, against `CLAUDE.md`'s
+"no model calls of any kind" rule. Every other mention of this control
+elsewhere in this doc (Verdicts below, the text-mode section, the test
+plan) describes now-removed behavior; not rewritten line by line, flagged
+once here.
+
+~~**Updated 2026-09-16, on direct request:** this control is no longer
 Wait-only — every Verdict screen below that shows a `Transcript` block
 now carries it too (pencil-marked, since it now doubles as "edit this
 answer" once a verdict has already been shown). Added live to the real
 Figma frames as well (cloned from this real instance, node
-`13759:45381`), not just built in code.
+`13759:45381`), not just built in code.~~
 
-**Refined same day, on direct request:** on Wait itself, this control no
+~~**Refined same day, on direct request:** on Wait itself, this control no
 longer appears at the same time as the "Checking" status — the real
 Figma frame (`wait footer`, node `13759:45381`) had them as horizontal
 siblings, shown together from the moment Wait begins, which is genuinely
@@ -375,7 +392,7 @@ sub-phases instead: "Checking" shows alone first (~700ms of Wait's
 both together. Figma is static and can't represent a timed sequence the
 same way; the live frame was updated to match the **resting** phase
 (Checking alone, no button) rather than fabricated as a second numbered
-frame — see `docs/component-gaps.md`.
+frame — see `docs/component-gaps.md`.~~
 
 ### Verdicts
 **Confirmed, one screen per verdict, same shape:** `RecallCard`,

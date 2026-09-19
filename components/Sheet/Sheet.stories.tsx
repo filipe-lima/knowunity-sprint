@@ -12,7 +12,7 @@ No Figma description exists for this component (its own description field is lit
 
 **States and options.** None -- a single component, not a set.
 
-**Other properties.** title TEXT, body TEXT, footnote TEXT, showFootnote BOOLEAN. One slot, Actions, now defaulting to a Primary/L "Yes, let me type" button above a Tertiary/M "No, back to home" button (matching real content), rather than sitting empty.
+**Other properties.** title TEXT, body TEXT, footnote TEXT, showFootnote BOOLEAN. One slot, Actions, now defaulting to a Primary/L "Yes, let me type" button above a Tertiary/M "Back to Recall Hub" button (matching real content), rather than sitting empty.
 
 **When to reach for it.** A single question that interrupts the flow, like the text-mode offer.
 
@@ -38,7 +38,7 @@ type Story = StoryObj<typeof meta>;
 
 // The real default instance — Figma's own default title/body/footnote,
 // and Actions left to fall back to the component's own real default (Yes,
-// let me type / No, back to home), not overridden here.
+// let me type / Back to Recall Hub), not overridden here.
 export const Default: Story = {};
 
 // showFootnote's documented default is true, but it's a real toggle —
