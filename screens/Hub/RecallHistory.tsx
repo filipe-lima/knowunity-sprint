@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { SkipForward, CheckCircle2, Mic } from 'lucide-react';
@@ -8,13 +7,7 @@ import { SkipForward, CheckCircle2, Mic } from 'lucide-react';
 import { Scaffold } from '../../components/Scaffold/Scaffold';
 import { Chips } from '../../components/Chips/Chips';
 import { BucketRow } from '../../components/BucketRow/BucketRow';
-import { ButtonGroup } from '../../components/ButtonGroup/ButtonGroup';
-import { Button } from '../../components/Button/Button';
-import { Sheet } from '../../components/Sheet/Sheet';
-import { MascotSlot } from '../../components/MascotSlot/MascotSlot';
-import { MascotArt } from '../../components/shared/MascotArt';
 import { ScaffoldHeader } from '../../components/ScaffoldHeader/ScaffoldHeader';
-import { TOPIC_TERMS } from '../Loop/script';
 
 /**
  * Recall history — the other half of screen 3 (`Extra 6 — Your terms`,
@@ -50,6 +43,14 @@ import { TOPIC_TERMS } from '../Loop/script';
  *   (`--font-size-xs`), differentiated only by weight/color, not size —
  *   the previous build used `--font-size-sm` (15px) for titles. Same fix
  *   for the body paragraph, also real 12px, not 15px.
+ *
+ * **Bottom actions removed entirely, 2026-09-19,** on direct request —
+ * "Say the N that are due" and "I can't speak right now" both had a real
+ * destination that's already reachable elsewhere: Hub's own "Terms you
+ * missed" row already routes to `/loop?topic=terms-you-missed` directly,
+ * and once there, Loop's own Idle-state escape button covers text mode
+ * the same way it does for every other topic. Neither became unreachable,
+ * just no longer duplicated on this screen too.
  */
 // `skipped` was `accent-coral-bold` with a Loader2 (loading-spinner) glyph
 // — coral is Miss's own color elsewhere, and Loader2 reads as "in
@@ -83,9 +84,30 @@ function SectionHeading({ children }: { children: string }) {
 const BODY_COPY =
   '47 terms you have met, and where each one stands now. Saying a term once is not the same as knowing it, so this shows when, not whether.';
 
+// Section rows as real data, not hand-typed JSX — each heading's count
+// badge reads off the same array's .length that renders the rows below
+// it, so the number can never disagree with what's actually shown again
+// (it used to: "Skipped" read "6" beside 3 rendered rows, "Said recently"
+// read "22" beside 3, "Never said out loud" read "19" beside 2).
+const SKIPPED_TERMS = [
+  { title: 'Internal validity', subtitle: 'Missed last session' },
+  { title: 'Sampling bias', subtitle: 'Skipped last session' },
+  { title: 'Random assignment', subtitle: 'Skipped 3 weeks ago' },
+];
+
+const SAID_RECENTLY_TERMS = [
+  { title: 'Construct validity', subtitle: 'Said unaided today' },
+  { title: 'Confounding variable', subtitle: 'Said after a hint today' },
+  { title: 'Ecological validity', subtitle: 'Said after a hint today' },
+];
+
+const NEVER_SAID_TERMS = [
+  { title: 'Operational definition', subtitle: 'From Research Methods, read Tuesday' },
+  { title: 'Cell membrane', subtitle: 'From Cell biology, read last week' },
+];
+
 export function RecallHistory() {
   const router = useRouter();
-  const [sheetOpen, setSheetOpen] = useState(false);
 
   const iconStyle = { width: '100%', height: '100%' };
 
@@ -110,141 +132,49 @@ export function RecallHistory() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
             <SectionHeading>Skipped</SectionHeading>
-            <Chips size="XS" active text="6" showLeftIcon={false} showRightIcon={false} />
+            <Chips size="XS" active text={String(SKIPPED_TERMS.length)} showLeftIcon={false} showRightIcon={false} />
           </div>
-          <BucketRow
-            titleSize="xs"
-            icon={<SkipForward style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.skipped}
-            title="Internal validity"
-            subtitle="Missed last session"
-          />
-          <BucketRow
-            titleSize="xs"
-            icon={<SkipForward style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.skipped}
-            title="Sampling bias"
-            subtitle="Skipped last session"
-          />
-          <BucketRow
-            titleSize="xs"
-            icon={<SkipForward style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.skipped}
-            title="Random assignment"
-            subtitle="Skipped 3 weeks ago"
-          />
+          {SKIPPED_TERMS.map((term) => (
+            <BucketRow
+              key={term.title}
+              titleSize="xs"
+              icon={<SkipForward style={iconStyle} />}
+              iconColor={SECTION_ICON_COLOR.skipped}
+              title={term.title}
+              subtitle={term.subtitle}
+            />
+          ))}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
             <SectionHeading>Said recently</SectionHeading>
-            <Chips size="XS" text="22" showLeftIcon={false} showRightIcon={false} />
+            <Chips size="XS" text={String(SAID_RECENTLY_TERMS.length)} showLeftIcon={false} showRightIcon={false} />
           </div>
-          <BucketRow
-            titleSize="xs"
-            icon={<CheckCircle2 style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.recent}
-            title="Construct validity"
-            subtitle="Said unaided today"
-          />
-          <BucketRow
-            titleSize="xs"
-            icon={<CheckCircle2 style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.recent}
-            title="Confounding variable"
-            subtitle="Said after a hint today"
-          />
-          <BucketRow
-            titleSize="xs"
-            icon={<CheckCircle2 style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.recent}
-            title="Ecological validity"
-            subtitle="Said after a hint today"
-          />
+          {SAID_RECENTLY_TERMS.map((term) => (
+            <BucketRow
+              key={term.title}
+              titleSize="xs"
+              icon={<CheckCircle2 style={iconStyle} />}
+              iconColor={SECTION_ICON_COLOR.recent}
+              title={term.title}
+              subtitle={term.subtitle}
+            />
+          ))}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
             <SectionHeading>Never said out loud</SectionHeading>
-            <Chips size="XS" text="19" showLeftIcon={false} showRightIcon={false} />
+            <Chips size="XS" text={String(NEVER_SAID_TERMS.length)} showLeftIcon={false} showRightIcon={false} />
           </div>
-          <BucketRow
-            titleSize="xs"
-            icon={<Mic style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.never}
-            title="Operational definition"
-            subtitle="From Research Methods, read Tuesday"
-          />
-          <BucketRow
-            titleSize="xs"
-            icon={<Mic style={iconStyle} />}
-            iconColor={SECTION_ICON_COLOR.never}
-            title="Cell membrane"
-            subtitle="From Cell biology, read last week"
-          />
+          {NEVER_SAID_TERMS.map((term) => (
+            <BucketRow
+              key={term.title}
+              titleSize="xs"
+              icon={<Mic style={iconStyle} />}
+              iconColor={SECTION_ICON_COLOR.never}
+              title={term.title}
+              subtitle={term.subtitle}
+            />
+          ))}
         </>
-      }
-      // Was inside middleContent's own scrollable fragment, at the tail end
-      // of 8 stacked rows — meaning it scrolled away with the list instead
-      // of staying reachable, unlike every other screen's real bottomContent
-      // action. Moved into the slot Scaffold actually built for this.
-      bottomContent={
-        <ButtonGroup
-          variant="Vertical"
-          size="M"
-          primary={
-            <Button
-              variant="Primary"
-              size="M"
-              // Was hand-typed '6', disagreeing with Hub's own hand-typed
-              // '3 terms' badge for the identical bucket — both now read
-              // from the same real script data.
-              cta={`Say the ${TOPIC_TERMS['terms-you-missed'].length} that are due`}
-              fill
-              onClick={() => router.push('/loop?topic=terms-you-missed')}
-            />
-          }
-          secondary={
-            <Button
-              variant="Secondary"
-              size="M"
-              cta="I can't speak right now"
-              fill
-              onClick={() => setSheetOpen(true)}
-            />
-          }
-        />
-      }
-      showBottomSheetBackground={sheetOpen}
-      bottomSheetOnly={
-        sheetOpen ? (
-          <>
-            {/* Every other place Knowie speaks to the student carries the
-                mascot — this screen inlines its own Sheet rather than
-                sharing screens/CannotSpeak/CannotSpeakSheet.tsx, so it
-                needed the same fix separately. */}
-            <MascotSlot size="XL" crop="Full">
-              <MascotArt pose="standby" />
-            </MascotSlot>
-            <Sheet
-            actions={
-              <>
-                <Button
-                  variant="Primary"
-                  size="L"
-                  cta="Yes, let me type"
-                  onClick={() => router.push('/loop?topic=terms-you-missed&mode=text')}
-                />
-                <Button
-                  variant="Tertiary"
-                  size="M"
-                  cta="Back to Recall Hub"
-                  onClick={() => {
-                    setSheetOpen(false);
-                    router.push('/hub');
-                  }}
-                />
-              </>
-            }
-            />
-          </>
-        ) : undefined
       }
     />
   );

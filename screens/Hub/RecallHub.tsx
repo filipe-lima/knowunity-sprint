@@ -6,12 +6,11 @@ import { useRouter } from 'next/navigation';
 import { Brain, GraduationCap, Plus, List, ChevronRight } from 'lucide-react';
 
 import { Scaffold } from '../../components/Scaffold/Scaffold';
-import { Chips } from '../../components/Chips/Chips';
 import { BucketRow } from '../../components/BucketRow/BucketRow';
 import { IconSlot } from '../../components/IconSlot/IconSlot';
 import { Button } from '../../components/Button/Button';
 import { ScaffoldHeader } from '../../components/ScaffoldHeader/ScaffoldHeader';
-import { TOPIC_LABELS, TOPIC_TERMS, type TopicSlug } from '../Loop/script';
+import { TOPIC_LABELS, type TopicSlug } from '../Loop/script';
 
 /**
  * Recall Hub — reverted 2026-09-16 back to this project's very first real
@@ -68,38 +67,26 @@ import { TOPIC_LABELS, TOPIC_TERMS, type TopicSlug } from '../Loop/script';
  * "three doors into one sheet" framing already treated this button as one
  * of three redundant doors, not uniquely load-bearing.
  */
-const TOPIC_ROWS: { slug: TopicSlug; icon: ReactNode; subtitle: string; badge: string }[] = [
+const TOPIC_ROWS: { slug: TopicSlug; icon: ReactNode; subtitle: string }[] = [
   {
     slug: 'research-methods',
     icon: <Brain style={{ width: '100%', height: '100%' }} />,
-    subtitle: '5 terms. Read Tuesday.',
-    // Neutral, matching the other three topics' own count-based badge —
-    // was 'Up next' before this screen had a "selected" concept at all;
-    // every row now shows its own real count, always, no active/inactive
-    // state to duplicate.
-    badge: '0 of 5',
+    subtitle: 'Read Tuesday.',
   },
   {
     slug: 'cell-biology',
     icon: '🧬',
     subtitle: 'Last practised last week',
-    badge: '1 of 6',
   },
   {
     slug: 'legal-studies',
     icon: '⚖️',
     subtitle: 'Read Friday. Never said out loud.',
-    badge: '0 of 4',
   },
   {
     slug: 'terms-you-missed',
     icon: '🔁',
     subtitle: 'From your last two sessions',
-    // Was a hand-typed '3 terms' — disagreed with Recall history's own
-    // hand-typed 'Say the 6 that are due' CTA, and with the real 5-term
-    // script both actually route to. Derived from the same data both
-    // screens already play against, so the two labels can't drift again.
-    badge: `${TOPIC_TERMS['terms-you-missed'].length} terms`,
   },
 ];
 
@@ -136,12 +123,9 @@ export function RecallHub() {
               subtitle={row.subtitle}
               onActivate={() => router.push(`/loop?topic=${row.slug}`)}
               trailing={
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
-                  <Chips size="XS" color="Primary" text={row.badge} />
-                  <IconSlot size="250" color="var(--color-text-secondary)">
-                    <ChevronRight style={iconStyle} />
-                  </IconSlot>
-                </div>
+                <IconSlot size="250" color="var(--color-text-secondary)">
+                  <ChevronRight style={iconStyle} />
+                </IconSlot>
               }
             />
           ))}
