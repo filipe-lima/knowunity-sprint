@@ -124,6 +124,18 @@ bottom navigation bar, or the chat input. One of those three, never two. It hugs
 its content and carries its own generous vertical padding, so do not add spacers
 above or below it. Gate it with `showBottomNavSlot`.
 
+**Stated exception: `Home`.** `screens/Home/Home.tsx` puts a quick-action chip
+row, the composer, and the nav bar all in one `bottomContent` — a deliberate,
+permanent exception to "one of those three, never two," not an unfixed break.
+Home is the app's single persistent-navigation hub screen: the nav bar has to
+be always-visible there in a way it doesn't on any task-flow screen (Hub,
+Loop, Summary), and the chip row is Home's own quick-launch surface, not a
+second composer or a second nav. Accepted as this screen's own shape because
+of that combination, specifically because it doesn't recur anywhere else in
+the product — do not copy this pattern onto a new screen; treat a second
+screen needing the same combination as a signal that `bottomContent` itself
+needs a real fourth option, not as licence to stack three things by default.
+
 **`bottomSheetOnly`.** Sheet content and the home indicator region. Pair it with
 `showBottomSheetBackground` when the sheet needs a scrim behind it. Leave it
 empty on ordinary screens.
@@ -452,10 +464,12 @@ and mic. Answer is the loop's text-mode input: a field, then send.
 
 **Don't.**
 
-> Don't stack a chip row, a composer and a nav bar in the same `bottomContent`.
-> The scaffold's documented rule is that `bottomContent` holds one of the CTA,
-> the nav or the chat input. Home already breaks it; do not build the break
-> into the component.
+> Don't stack a chip row, a composer and a nav bar in the same `bottomContent`
+> on a new screen. The scaffold's documented rule is that `bottomContent`
+> holds one of the CTA, the nav or the chat input — `Home` is a stated,
+> permanent exception to that rule (see `scaffold`'s own "Stated exception"
+> note above), not a precedent. Do not build the same stack into a second
+> screen on the strength of Home already doing it.
 
 ### `topBar`
 

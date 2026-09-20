@@ -124,6 +124,10 @@ export function Home() {
           />
         )
       }
+      // Stacks a chip row, the composer, and Navbar in one bottomContent —
+      // a stated, permanent exception to the scaffold's "one of those
+      // three, never two" rule (docs/design-system.md's `scaffold` entry).
+      // Do not copy this onto another screen.
       bottomContent={
         <>
           <div style={{ display: 'flex', gap: 'var(--space-200)', flexWrap: 'wrap', alignItems: 'center' }}>

@@ -572,17 +572,28 @@ export function Loop({ topic, initialTextMode }: LoopProps) {
           ),
         };
       }
-      case 'hintRevealed':
+      case 'hintRevealed': {
+        // Hint is offered identically on Miss and Almost (see the verdict
+        // case above), so this state must be too — it used to hardcode
+        // `Miss`, which silently downgraded every Almost into a full-miss
+        // badge with an empty hint body, since no `almost` variant defined
+        // one. Found live, round 4: eval/scorecard-04.md's hard-gate
+        // finding ("no two states that should differ ever render
+        // identically" — a genuine Miss's hint screen and an Almost's were
+        // indistinguishable). `attempt.verdict` still reads the underlying
+        // first attempt here — `handleHint` doesn't touch `attemptIndex`.
+        const isMiss = attempt.verdict === 'miss';
         return {
           mascot: null,
           card: (
             <>
-              <VerdictBadge variant="Miss" label={VERDICT_LABEL.miss} />
+              <VerdictBadge variant={isMiss ? 'Miss' : 'Almost'} label={VERDICT_LABEL[attempt.verdict]} />
               <RecallBlock variant="Hint" label="Hint" body={variant.hintBody ?? ''} />
             </>
           ),
           bottom: <Button variant="Primary" size="L" cta="Try again" onClick={handleTryAgain} />,
         };
+      }
       case 'disputeConfirm':
         return {
           mascot: null,

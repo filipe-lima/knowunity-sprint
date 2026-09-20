@@ -204,6 +204,7 @@ const RESEARCH_METHODS_TERMS: TermScript[] = [
             verdict: 'success',
           },
         ],
+        hintBody: 'Think about the specific word for "holds up somewhere else" — not just that it involves the real world, but that it generalizes.',
       },
     ],
   },
@@ -230,6 +231,7 @@ const RESEARCH_METHODS_TERMS: TermScript[] = [
             verdict: 'success',
           },
         ],
+        hintBody: 'Think about what else could explain the result besides your variable — not just that the design is solid, but what it rules out.',
       },
       {
         attempts: [
@@ -357,6 +359,7 @@ const CELL_BIOLOGY_TERMS: TermScript[] = [
             verdict: 'success',
           },
         ],
+        hintBody: 'Think about whether the cell has to spend energy to make it happen — it doesn’t, and that’s the word that’s missing.',
       },
       {
         attempts: [
@@ -484,6 +487,7 @@ const LEGAL_STUDIES_TERMS: TermScript[] = [
             verdict: 'success',
           },
         ],
+        hintBody: 'Think about which specific case a court can actually rule on — not just that it has authority, but over what.',
       },
       {
         attempts: [
@@ -609,6 +613,7 @@ const TERMS_YOU_MISSED_TERMS: TermScript[] = [
             verdict: 'success',
           },
         ],
+        hintBody: 'Think about whether the cell has to spend energy to make it happen — it doesn’t, and that’s the word that’s missing.',
       },
       {
         attempts: [
